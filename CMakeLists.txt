@@ -4,6 +4,7 @@ project(${LIBNAME} LANGUAGES C CXX VERSION 1.0.1 DESCRIPTION "Libretro core")
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 
 add_library(${LIBNAME} SHARED 
+	src/MCS6502.c
     src/libretro.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES

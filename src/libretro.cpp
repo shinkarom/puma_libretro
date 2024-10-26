@@ -11,6 +11,8 @@
 #endif
 #include "libretro.h"
 
+#include "MCS6502.h"
+
 constexpr auto screenWidth = 256;
 constexpr auto screenHeight = 384;
 constexpr auto screenTotalPixels = screenWidth * screenHeight;
