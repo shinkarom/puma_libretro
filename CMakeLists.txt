@@ -12,27 +12,14 @@ add_library(musashi STATIC
 )
 target_include_directories(musashi PUBLIC src/musashi)
 
-add_library(ymfm STATIC
-	src/ymfm/ymfm_adpcm.cpp
-	src/ymfm/ymfm_misc.cpp
-	src/ymfm/ymfm_opl.cpp
-	src/ymfm/ymfm_opm.cpp
-	src/ymfm/ymfm_opn.cpp
-	src/ymfm/ymfm_opq.cpp
-	src/ymfm/ymfm_opz.cpp
-	src/ymfm/ymfm_pcm.cpp
-	src/ymfm/ymfm_ssg.cpp
-)
-target_include_directories(ymfm PUBLIC src/ymfm)
-
 add_library(${LIBNAME} SHARED 
-	src/MCS6502.c
     src/libretro.cpp
+	src/opl3.c
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1
     PUBLIC_HEADER src/libretro.h
     LINKER_LANGUAGE CXX
 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-target_link_libraries(${LIBNAME} musashi ymfm)
+target_link_libraries(${LIBNAME} musashi)
 target_include_directories(${LIBNAME} PUBLIC src)

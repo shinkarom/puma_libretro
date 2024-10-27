@@ -11,7 +11,6 @@
 #endif
 #include "libretro.h"
 
-#include "MCS6502.h"
 #include "m68k.h"
 
 constexpr auto screenWidth = 256;
