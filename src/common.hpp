@@ -5,5 +5,8 @@
 constexpr auto audioSampleRate = 44100;
 constexpr auto framesPerSecond = 60;
 constexpr int samplesPerFrame = audioSampleRate / framesPerSecond;
+constexpr auto cpuClockRate = 40*1024*1024;
+constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
+constexpr auto totalMemory = 16*1024*1024;
 
 extern uint64_t frameNum;
