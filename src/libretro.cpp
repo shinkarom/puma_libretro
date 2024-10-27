@@ -12,6 +12,7 @@
 #include "libretro.h"
 
 #include "m68k.h"
+#include "opl3.h"
 
 constexpr auto screenWidth = 256;
 constexpr auto screenHeight = 384;
@@ -26,6 +27,10 @@ static float last_aspect;
 static float last_sample_rate;
 char retro_base_directory[4096];
 char retro_game_path[4096];
+
+uint64_t frameNum = 0;
+
+opl3_chip chip;
 
 unsigned int  m68k_read_memory_8(unsigned int address) {
 	return 0;
@@ -75,6 +80,8 @@ void retro_init(void)
    
    m68k_set_cpu_type(M68K_CPU_TYPE_68000);
    m68k_init();
+   
+   OPL3_Reset(&chip, audioSampleRate);
    
 }
 
@@ -188,15 +195,15 @@ static void check_variables(void)
 
 static void audio_callback(void)
 {
-	static unsigned phase;
-   for (unsigned i = 0; i < audioSampleRate / 60; i++, phase++)
-   {
-      int16_t val = 0x800 * sinf(2.0f * M_PI * phase * 
-		(audioSampleRate*1.0f/100) / (audioSampleRate *1.0f));
-      audio_cb(val, val);
+   
+   constexpr int numsamples = audioSampleRate / 60;
+	static int16_t audioBuffer[numsamples*2];
+   
+   OPL3_GenerateStream(&chip, audioBuffer, numsamples);
+   for(int i = 0; i< numsamples; i+=2) {
+	   audio_cb(audioBuffer[i*2],audioBuffer[i*2+1]);
    }
-
-   phase %= 100;
+   
 }
 
 static void audio_set_state(bool enable)
@@ -215,6 +222,15 @@ void retro_run(void)
    update_input();
 
 	video_cb(frame_buf, screenWidth, screenHeight, screenWidth*sizeof(uint32_t));
+
+	if(frameNum%60 == 0) {
+		OPL3_WriteRegBuffered(&chip, 0xA0,	0x40);
+		OPL3_WriteRegBuffered(&chip, 0xB0,	0x31);
+	} if(frameNum%60 == 30) {
+		OPL3_WriteRegBuffered(&chip, 0xB0,	0x00);
+	}
+
+	frameNum++;
 
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
@@ -251,6 +267,25 @@ bool retro_load_game(const struct retro_game_info *info)
 
 	m68k_pulse_reset();
 
+	int16_t x[26] = {0x105,	0x01, //	Enable OPL3 mode
+		0x20,	0x01,	//Operator 1 (Modulator) Multiplier 1
+		0x40,	0x00,	//Operator 1 Output Level
+		0x60,	0xF0,	//Operator 1 Attack/Decay Rate
+		0x80,	0xF0,	//Operator 1 Sustain/Release Rate
+		0xE0,	0x00,	//Operator 1 Sine Wave
+		0x23,	0x01,	//Operator 2 (Carrier) Multiplier 1
+		0x43,	0x00,	//Operator 2 Output Level
+		0x63,	0xF0,	//Operator 2 Attack/Decay Rate
+		0x83,	0xF0,	//Operator 2 Sustain/Release Rate
+		0xE3,	0x00,	//Operator 2 Sine Wave
+		0xA0,	0x40,	//Set Frequency Low Byte
+		0xB0,	0x31,	//Set Block and Key-On Channel 0
+	};
+	
+	for(int i = 0; i<26;i+=2){
+		OPL3_WriteRegBuffered(&chip, x[i*2], x[i*2+1]);
+	}
+	frameNum = 0;
    (void)info;
    return true;
 }
