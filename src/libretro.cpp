@@ -11,11 +11,9 @@
 #endif
 #include "libretro.h"
 
-#include "m68k.h"
-#include "opl3.h"
-
 #include "common.hpp"
 #include "apu.hpp"
+#include "cpu.hpp"
 
 constexpr auto screenWidth = 256;
 constexpr auto screenHeight = 384;
@@ -31,32 +29,6 @@ char retro_base_directory[4096];
 char retro_game_path[4096];
 
 uint64_t frameNum = 0;
-
-
-
-unsigned int  m68k_read_memory_8(unsigned int address) {
-	return 0;
-}
-
-unsigned int  m68k_read_memory_16(unsigned int address) {
-	return 0;
-}
-
-unsigned int  m68k_read_memory_32(unsigned int address) {
-	return 0;
-}
-
-void m68k_write_memory_8(unsigned int address, unsigned int value) {
-	
-}
-
-void m68k_write_memory_16(unsigned int address, unsigned int value) {
-	
-}
-
-void m68k_write_memory_32(unsigned int address, unsigned int value) {
-	
-}
 
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)
 {
@@ -80,10 +52,8 @@ void retro_init(void)
       snprintf(retro_base_directory, sizeof(retro_base_directory), "%s", dir);
    }
    
-   m68k_set_cpu_type(M68K_CPU_TYPE_68000);
-   m68k_init();
    apu::init();
-   
+   cpu::init();
 }
 
 void retro_deinit(void)
@@ -91,6 +61,7 @@ void retro_deinit(void)
    delete[] frame_buf;
    
    apu::deinit();
+   cpu::deinit();
 }
 
 unsigned retro_api_version(void)
@@ -200,7 +171,7 @@ static void audio_callback(void)
 {
    int16_t* buf = apu::callback();
    
-   for(int i = 0; i< samplesPerFrame; i+=2) {
+   for(int i = 0; i<samplesPerFrame; i++) {
 	   audio_cb(*buf++, *buf++);
    }
    
@@ -223,9 +194,8 @@ void retro_run(void)
 
 	video_cb(frame_buf, screenWidth, screenHeight, screenWidth*sizeof(uint32_t));
 
+	cpu::frame();
 	 apu::frame();
-	
-	
 	
 	frameNum++;
 
@@ -261,8 +231,6 @@ bool retro_load_game(const struct retro_game_info *info)
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
    check_variables();
-
-	m68k_pulse_reset();
 
 	frameNum = 0;
    (void)info;
