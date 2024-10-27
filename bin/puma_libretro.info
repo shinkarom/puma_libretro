@@ -1,8 +1,8 @@
 # Software Information
-display_name = "libretrocore"
+display_name = "Puma"
 authors = "shinkarom"
 supported_extensions = "cart"
-corename = "libretrocore"
+corename = "puma_libretro"
 categories = "Core"
 license = "GPL 3.0"
 permissions = ""
@@ -13,4 +13,4 @@ display_version = "v1.0"
 # Libretro Features
 supports_no_game = "false"
 
-description = "Libretro core."
+description = "Puma game computer."
