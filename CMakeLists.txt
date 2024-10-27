@@ -15,6 +15,7 @@ target_include_directories(musashi PUBLIC src/musashi)
 add_library(${LIBNAME} SHARED 
     src/libretro.cpp
 	src/opl3.c
+	src/apu.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1
