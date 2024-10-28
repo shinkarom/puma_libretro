@@ -16,12 +16,8 @@
 #include "apu.hpp"
 #include "cpu.hpp"
 #include "bus.hpp"
+#include "ppu.hpp"
 
-constexpr auto screenWidth = 256;
-constexpr auto screenHeight = 384;
-constexpr auto screenTotalPixels = screenWidth * screenHeight;
-
-static uint32_t *frame_buf;
 static struct retro_log_callback logging;
 static retro_log_printf_t log_cb;
 static bool use_audio_cb;
@@ -46,8 +42,6 @@ static retro_environment_t environ_cb;
 
 void retro_init(void)
 {
-   frame_buf = new uint32_t[screenTotalPixels];
-   memset(frame_buf,0,screenTotalPixels*sizeof(uint32_t));
    const char *dir = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) && dir)
    {
@@ -55,14 +49,14 @@ void retro_init(void)
    }
    
    apu::init();
+   ppu::init();
    cpu::init();
 }
 
 void retro_deinit(void)
-{
-   delete[] frame_buf;
-   
+{   
    apu::deinit();
+   ppu::deinit();
    cpu::deinit();
 }
 
@@ -194,10 +188,11 @@ void retro_run(void)
 {
    update_input();
 
-	video_cb(frame_buf, screenWidth, screenHeight, screenWidth*sizeof(uint32_t));
-
 	cpu::frame();
+	ppu::frame();
 	 apu::frame();
+	 
+	video_cb(ppu::getBuffer(), screenWidth, screenHeight, screenWidth*sizeof(uint32_t)); 
 	
 	frameNum++;
 

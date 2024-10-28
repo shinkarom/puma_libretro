@@ -2,6 +2,10 @@
 
 #include <cstdint>
 
+constexpr auto screenWidth = 256;
+constexpr auto screenHeight = 384;
+constexpr auto screenTotalPixels = screenWidth * screenHeight;
+
 constexpr auto audioSampleRate = 44100;
 constexpr auto framesPerSecond = 60;
 constexpr int samplesPerFrame = audioSampleRate / framesPerSecond;
