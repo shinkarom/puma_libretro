@@ -22,8 +22,6 @@ namespace apu {
 			0x63,	0xF0,	//Operator 2 Attack/Decay Rate
 			0x83,	0xF0,	//Operator 2 Sustain/Release Rate
 			0xE3,	0x00,	//Operator 2 Sine Wave
-			0xA0,	0x40,	//Set Frequency Low Byte
-			0xB0,	0x31,	//Set Block and Key-On Channel 0
 		};
 	
 		for(int i = 0; i<26;i+=2){

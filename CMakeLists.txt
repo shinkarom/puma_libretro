@@ -17,6 +17,7 @@ add_library(${LIBNAME} SHARED
 	src/opl3.c
 	src/apu.cpp
 	src/cpu.cpp
+	src/bus.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1

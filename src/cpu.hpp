@@ -4,4 +4,5 @@ namespace cpu {
 	void init();
 	void deinit();
 	void frame();
+	void onLoad();
 }

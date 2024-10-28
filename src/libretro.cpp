@@ -3,7 +3,8 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
-#include <math.h>
+#include <cmath>
+#include <iostream>
 
 #include <stdio.h>
 #if defined(_WIN32) && !defined(_XBOX)
@@ -14,6 +15,7 @@
 #include "common.hpp"
 #include "apu.hpp"
 #include "cpu.hpp"
+#include "bus.hpp"
 
 constexpr auto screenWidth = 256;
 constexpr auto screenHeight = 384;
@@ -231,6 +233,13 @@ bool retro_load_game(const struct retro_game_info *info)
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
    check_variables();
+
+	std::cout<<retro_game_path<<std::endl;
+	if(!bus::load(retro_game_path)) {
+		return false;
+	}
+	
+	cpu::onLoad();
 
 	frameNum = 0;
    (void)info;
