@@ -7,8 +7,6 @@
 
 #include "bus.hpp"
 
-int nextCycles;
-
 unsigned int  m68k_read_memory_8(unsigned int address) {
 	auto r = bus::read8(address);
 	//std::cout<<"Read 8bit from "<<address<<": "<<r<<std::endl;
@@ -50,16 +48,16 @@ namespace cpu {
 	}
 	
 	void frame() {
-		auto x = m68k_execute(nextCycles);
-		nextCycles = cyclesPerFrame+(cyclesPerFrame - x);
+		bus::write32(0x40200, frameNum);
+		
+		auto x = m68k_execute(cyclesPerFrame);
 		auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
-		//std::cout<<x<<" "<<(cyclesPerFrame - x)<<" "<<pc<<std::endl;
+		std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
 	}
 	
 	void onLoad() {
 		bus::write32(0, 0x400);
 		bus::write32(0x4, codeOffset);
 		m68k_pulse_reset();
-		nextCycles = cyclesPerFrame;
 	}
 }

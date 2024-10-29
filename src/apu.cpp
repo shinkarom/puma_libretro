@@ -32,7 +32,7 @@ namespace apu {
 		
 	}
 	
-	void frame() {
+	void afterFrame() {
 		if(frameNum%60 == 0) {
 		OPL3_WriteRegBuffered(&chip, 0xA0,	0x40);
 		OPL3_WriteRegBuffered(&chip, 0xB0,	0x31);

@@ -25,8 +25,24 @@ static float last_aspect;
 static float last_sample_rate;
 char retro_base_directory[4096];
 char retro_game_path[4096];
+static retro_environment_t environ_cb;
 
 uint64_t frameNum = 0;
+int screenWidth, screenHeight, screenTotalPixels;
+void (*wh_callback)(int w, int h);
+
+void change_wh(int w, int h) {
+	retro_game_geometry geo;
+	geo.base_width = w;
+	geo.base_height = h;
+	geo.aspect_ratio = 0.0f;
+	if(environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &geo)) {
+		screenWidth = w;
+		screenHeight = h;
+		screenTotalPixels = screenWidth * screenHeight;
+	}
+	std::cout<<"Screen changed to "<<w<<"x"<<h<<std::endl;
+}
 
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)
 {
@@ -37,9 +53,6 @@ static void fallback_log(enum retro_log_level level, const char *fmt, ...)
    va_end(va);
 }
 
-
-static retro_environment_t environ_cb;
-
 void retro_init(void)
 {
    const char *dir = NULL;
@@ -47,6 +60,8 @@ void retro_init(void)
    {
       snprintf(retro_base_directory, sizeof(retro_base_directory), "%s", dir);
    }
+   
+   wh_callback = &change_wh;
    
    apu::init();
    ppu::init();
@@ -73,7 +88,7 @@ void retro_set_controller_port_device(unsigned port, unsigned device)
 void retro_get_system_info(struct retro_system_info *info)
 {
    memset(info, 0, sizeof(*info));
-   info->library_name     = "Libretro core";
+   info->library_name     = "Puma";
    info->library_version  = "0.1";
    info->need_fullpath    = true;
    info->valid_extensions = "";
@@ -187,11 +202,13 @@ static void keyboard_cb(bool down, unsigned keycode,
 void retro_run(void)
 {
    update_input();
-
+	
+	ppu::beforeFrame();
+	
 	cpu::frame();
-	ppu::frame();
-	 apu::frame();
-	 
+	ppu::afterFrame();
+	 apu::afterFrame();
+
 	video_cb(ppu::getBuffer(), screenWidth, screenHeight, screenWidth*sizeof(uint32_t)); 
 	
 	frameNum++;
@@ -235,6 +252,7 @@ bool retro_load_game(const struct retro_game_info *info)
 	}
 	
 	cpu::onLoad();
+	ppu::afterLoad();
 
 	frameNum = 0;
    (void)info;

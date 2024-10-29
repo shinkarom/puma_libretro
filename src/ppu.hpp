@@ -5,7 +5,9 @@
 namespace ppu {
 	void init();
 	void deinit();
-	void frame();
+	void afterLoad();
+	void beforeFrame();
+	void afterFrame();
 	
 	uint32_t* getBuffer();
 }
