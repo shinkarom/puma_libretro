@@ -19,6 +19,7 @@ add_library(${LIBNAME} SHARED
 	src/cpu.cpp
 	src/bus.cpp
 	src/ppu.cpp
+	src/input.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1

@@ -9,13 +9,19 @@ namespace bus {
 	uint8_t memory[totalMemory];
 	
 	void write8(uint32_t address, uint8_t value) {
-		if(address>totalMemory)
+		if(address == 0xFFFFFF00) {
+			syscall_callback(address, value);
+			return;
+		} else if(address>totalMemory)
 			return;
 		memory[address] = value;
 	}
 	
 	void write16(uint32_t address, uint16_t value) {
-		if(address>totalMemory)
+		if(address == 0xFFFFFF00) {
+			syscall_callback(address, value);
+			return;
+		} else if(address>totalMemory)
 			return;
 		memory[address] = (value>>8)&0xFF;
 		memory[address+1] = (value)&0xFF;
@@ -23,7 +29,7 @@ namespace bus {
 	
 	void write32(uint32_t address, uint32_t value) {
 		if(address == 0xFFFFFF00) {
-			syscall_callback(value);
+			syscall_callback(address, value);
 			return;
 		} else if(address>totalMemory)
 			return;

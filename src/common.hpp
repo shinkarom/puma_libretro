@@ -3,7 +3,10 @@
 #include <cstdint>
 
 extern void (*wh_callback)(int w, int h);
-extern void (*syscall_callback)(int opcode);
+extern void (*syscall_callback)(int address, int value);
+
+constexpr int buttonMapping[12] = {4, 5, 6, 7, 2, 3, 8, 0, 9, 1, 10, 11};
+constexpr int numButtons = 12;
 
 constexpr auto maxScreenWidth = 256;
 constexpr auto maxScreenHeight = 256;

@@ -17,6 +17,7 @@
 #include "cpu.hpp"
 #include "bus.hpp"
 #include "ppu.hpp"
+#include "input.hpp"
 
 static struct retro_log_callback logging;
 static retro_log_printf_t log_cb;
@@ -30,7 +31,7 @@ static retro_environment_t environ_cb;
 uint64_t frameNum = 0;
 int screenWidth, screenHeight, screenTotalPixels;
 void (*wh_callback)(int w, int h);
-void (*syscall_callback)(int opcode);
+void (*syscall_callback)(int address, int value);
 
 void change_wh(int w, int h) {
 	if(w<0 || w>maxScreenWidth || h < 0 || h > maxScreenHeight) {
@@ -66,6 +67,7 @@ void retro_init(void)
    
    wh_callback = &change_wh;
    
+   input::init();
    apu::init();
    ppu::init();
    cpu::init();
@@ -172,7 +174,19 @@ void retro_reset(void)
 
 static void update_input(void)
 {
-
+	input::previouslyPressedButtons = input::pressedButtons;
+	input::pressedButtons = 0;
+	uint16_t state;
+	
+	for (int i = 0; i< numButtons; i++) {
+		state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, buttonMapping[i]);
+		if(state) {
+			input::pressedButtons |= (1 <<i+1);
+		}
+	}
+	
+	input::justPressedButtons = (~ input::previouslyPressedButtons) & input::pressedButtons;
+	input::justReleasedButtons = input::previouslyPressedButtons & (~ input::pressedButtons);
 }
 
 
@@ -205,6 +219,7 @@ static void keyboard_cb(bool down, unsigned keycode,
 void retro_run(void)
 {
    update_input();
+   input::beforeFrame();
 	
 	ppu::beforeFrame();
 	

@@ -37,8 +37,8 @@ void m68k_write_memory_32(unsigned int address, unsigned int value) {
 	bus::write32(address, value);
 }
 
-void syscall_handler(int opcode) {
-	std::cout<<"Syscall "<<opcode<<" triggered"<<std::endl;
+void syscall_handler(int address, int value) {
+	std::cout<<"Syscall "<<address<<" triggered with "<<value<<std::endl;
 }
 
 namespace cpu {
