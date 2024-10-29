@@ -22,7 +22,10 @@ namespace bus {
 	}
 	
 	void write32(uint32_t address, uint32_t value) {
-		if(address>totalMemory)
+		if(address == 0xFFFFFF00) {
+			syscall_callback(value);
+			return;
+		} else if(address>totalMemory)
 			return;
 		memory[address] =  (value>>24)&0xFF;
 		memory[address+1] =  (value>>16)&0xFF;

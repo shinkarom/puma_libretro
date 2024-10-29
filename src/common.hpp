@@ -3,6 +3,7 @@
 #include <cstdint>
 
 extern void (*wh_callback)(int w, int h);
+extern void (*syscall_callback)(int opcode);
 
 constexpr auto maxScreenWidth = 256;
 constexpr auto maxScreenHeight = 256;

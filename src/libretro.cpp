@@ -30,8 +30,12 @@ static retro_environment_t environ_cb;
 uint64_t frameNum = 0;
 int screenWidth, screenHeight, screenTotalPixels;
 void (*wh_callback)(int w, int h);
+void (*syscall_callback)(int opcode);
 
 void change_wh(int w, int h) {
+	if(w<0 || w>maxScreenWidth || h < 0 || h > maxScreenHeight) {
+		return;
+	}
 	retro_game_geometry geo;
 	geo.base_width = w;
 	geo.base_height = h;
@@ -41,7 +45,6 @@ void change_wh(int w, int h) {
 		screenHeight = h;
 		screenTotalPixels = screenWidth * screenHeight;
 	}
-	std::cout<<"Screen changed to "<<w<<"x"<<h<<std::endl;
 }
 
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)

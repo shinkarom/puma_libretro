@@ -37,10 +37,15 @@ void m68k_write_memory_32(unsigned int address, unsigned int value) {
 	bus::write32(address, value);
 }
 
+void syscall_handler(int opcode) {
+	std::cout<<"Syscall "<<opcode<<" triggered"<<std::endl;
+}
+
 namespace cpu {
 	void init() {
 		m68k_set_cpu_type(M68K_CPU_TYPE_68040);
 		m68k_init();
+		syscall_callback = &syscall_handler;
 	}
 	
 	void deinit() {
