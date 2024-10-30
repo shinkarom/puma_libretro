@@ -85,49 +85,19 @@ namespace input {
 	   RETROK_END,
 	   RETROK_PAGEUP,
 	   RETROK_PAGEDOWN,
-	   RETROK_ESCAPE,
 	   RETROK_BACKSPACE,
 	   RETROK_INSERT,
 	   RETROK_DELETE,
-	   RETROK_F1,
-	   RETROK_F2,
-	   RETROK_F3,
-	   RETROK_F4,
-	   RETROK_F5,
-	   RETROK_F6,
-	   RETROK_F7,
-	   RETROK_F8,
-	   RETROK_F9,
-	   RETROK_F10,
-	   RETROK_F11,
-	   RETROK_F12,
-	   RETROK_KP0,
-	   RETROK_KP1,
-	   RETROK_KP2,
-	   RETROK_KP3,
-	   RETROK_KP4,
-	   RETROK_KP5,
-	   RETROK_KP6,
-	   RETROK_KP7,
-	   RETROK_KP8,
-	   RETROK_KP9,
-	   RETROK_KP_PERIOD,
-	   RETROK_KP_DIVIDE,
-	   RETROK_KP_MULTIPLY,
-	   RETROK_KP_MINUS,
-	   RETROK_KP_PLUS,
-	   RETROK_KP_ENTER,
-	   RETROK_KP_EQUALS,
 	};
 	
 	extern uint16_t pressedButtons;
 	extern uint16_t justPressedButtons;
 	extern uint16_t justReleasedButtons;
 	extern uint16_t previouslyPressedButtons;
-	extern uint32_t pressedKeys[5];
-	extern uint32_t justPressedKeys[5];
-	extern uint32_t justReleasedKeys[5];
-	extern uint32_t previouslyPressedKeys[5];
+	extern uint32_t pressedKeys[4];
+	extern uint32_t justPressedKeys[4];
+	extern uint32_t justReleasedKeys[4];
+	extern uint32_t previouslyPressedKeys[4];
 	
 	void init();
 	void beforeFrame();

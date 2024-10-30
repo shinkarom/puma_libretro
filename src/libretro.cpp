@@ -189,7 +189,7 @@ static void update_input(void)
 	input::justPressedButtons = (~ input::previouslyPressedButtons) & input::pressedButtons;
 	input::justReleasedButtons = input::previouslyPressedButtons & (~ input::pressedButtons);
 	
-	for(int i = 0; i<5;i++) {
+	for(int i = 0; i<4;i++) {
 		input::previouslyPressedKeys[i] = input::pressedKeys[i];
 		input::pressedKeys[i] = 0;
 	}
@@ -201,7 +201,7 @@ static void update_input(void)
 			input::pressedKeys[n] |= (1 << b);
 		}
 	}
-	for(int i = 0; i<5; i++) {
+	for(int i = 0; i<4; i++) {
 		input::justPressedKeys[i] = (~ input::previouslyPressedKeys[i]) & input::pressedKeys[i];
 		input::justReleasedKeys[i] = input::previouslyPressedKeys[i] & (~ input::pressedKeys[i]);
 	}
@@ -226,12 +226,6 @@ static void audio_callback(void)
 static void audio_set_state(bool enable)
 {
    (void)enable;
-}
-
-static void keyboard_cb(bool down, unsigned keycode,
-      uint32_t character, uint16_t mod)
-{
-	
 }
 
 void retro_run(void)
@@ -276,9 +270,6 @@ bool retro_load_game(const struct retro_game_info *info)
    snprintf(retro_game_path, sizeof(retro_game_path), "%s", info->path);
    struct retro_audio_callback audio_cb = { audio_callback, audio_set_state };
    use_audio_cb = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK, &audio_cb);
-
-	struct retro_keyboard_callback cb = { keyboard_cb };
-   environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 
    check_variables();
 

@@ -7,7 +7,7 @@ extern void (*syscall_callback)(int address, int value);
 extern void (*audioRegistersCallback)(int reg, int value);
 
 constexpr int numButtons = 12;
-constexpr int numKeys = 134;
+constexpr int numKeys = 104;
 
 constexpr auto maxScreenWidth = 256;
 constexpr auto maxScreenHeight = 256;

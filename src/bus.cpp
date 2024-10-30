@@ -39,14 +39,14 @@ namespace bus {
 	uint16_t read16(uint32_t address) {
 		if(address>totalMemory)
 			return 0;
-		auto r = (read8(address)<<8)|(read8(address+1));
+		auto r = (memory[address]<<8)|(memory[address+1]);
 		return r;
 	}
 	
 	uint32_t read32(uint32_t address) {
 		if(address>totalMemory)
 			return 0;
-		auto r = (read8(address)<<24)|(read8(address+1)<<16)|(read8(address+2)<<8)|(read8(address+3));
+		auto r = (memory[address]<<24)|(memory[address+1]<<16)|(memory[address+2]<<8)|(memory[address+3]);
 		return r;
 	}
 	
