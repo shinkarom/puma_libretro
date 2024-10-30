@@ -57,7 +57,7 @@ namespace cpu {
 		
 		auto x = m68k_execute(cyclesPerFrame);
 		auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
-		std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
+		//std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
 	}
 	
 	void onLoad() {

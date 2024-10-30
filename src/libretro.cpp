@@ -179,9 +179,9 @@ static void update_input(void)
 	uint16_t state;
 	
 	for (int i = 0; i< numButtons; i++) {
-		state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, buttonMapping[i]);
+		state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, input::buttonMapping[i]);
 		if(state) {
-			input::pressedButtons |= (1 <<i+1);
+			input::pressedButtons |= (1 <<i);
 		}
 	}
 	
@@ -213,7 +213,9 @@ static void audio_set_state(bool enable)
 static void keyboard_cb(bool down, unsigned keycode,
       uint32_t character, uint16_t mod)
 {
-
+	if(down) {
+		std::cout<<"Pressed key "<<keycode<<std::endl;
+	}
 }
 
 void retro_run(void)
