@@ -188,23 +188,6 @@ static void update_input(void)
 	
 	input::justPressedButtons = (~ input::previouslyPressedButtons) & input::pressedButtons;
 	input::justReleasedButtons = input::previouslyPressedButtons & (~ input::pressedButtons);
-	
-	for(int i = 0; i<4;i++) {
-		input::previouslyPressedKeys[i] = input::pressedKeys[i];
-		input::pressedKeys[i] = 0;
-	}
-	for(int i = 0; i<numKeys; i++) {
-		state = input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0, input::keyMapping[i]);
-		if(state) {
-			int n = i / 32;
-			int b = i % 32;
-			input::pressedKeys[n] |= (1 << b);
-		}
-	}
-	for(int i = 0; i<4; i++) {
-		input::justPressedKeys[i] = (~ input::previouslyPressedKeys[i]) & input::pressedKeys[i];
-		input::justReleasedKeys[i] = input::previouslyPressedKeys[i] & (~ input::pressedKeys[i]);
-	}
 }
 
 
