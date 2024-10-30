@@ -6,6 +6,7 @@ extern void (*wh_callback)(int w, int h);
 extern void (*syscall_callback)(int address, int value);
 
 constexpr int numButtons = 12;
+constexpr int numKeys = 135;
 
 constexpr auto maxScreenWidth = 256;
 constexpr auto maxScreenHeight = 256;

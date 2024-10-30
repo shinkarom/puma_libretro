@@ -129,6 +129,10 @@ namespace input {
 	extern uint16_t justPressedButtons;
 	extern uint16_t justReleasedButtons;
 	extern uint16_t previouslyPressedButtons;
+	extern uint32_t pressedKeys[5];
+	extern uint32_t justPressedKeys[5];
+	extern uint32_t justReleasedKeys[5];
+	extern uint32_t previouslyPressedKeys[5];
 	
 	void init();
 	void beforeFrame();
