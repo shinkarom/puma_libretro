@@ -26,15 +26,32 @@ unsigned int  m68k_read_memory_32(unsigned int address) {
 }
 
 void m68k_write_memory_8(unsigned int address, unsigned int value) {
-	bus::write8(address, value);
+		if(address == 0xFFFFFF00) {
+			syscall_callback(address, value);
+			return;
+		} else if (address>=apuRegistersOffset && address<apuRegistersOffset+numApuRegisters) {
+			audioRegistersCallback(address-apuRegistersOffset, value);
+		} else {
+			bus::write8(address, value);
+		}
 }
 
 void m68k_write_memory_16(unsigned int address, unsigned int value) {
-	bus::write16(address, value);
+	if(address == 0xFFFFFF00) {
+		syscall_callback(address, value);
+		return;
+	} else {
+		bus::write16(address, value);
+	}
 }
 
 void m68k_write_memory_32(unsigned int address, unsigned int value) {
-	bus::write32(address, value);
+	if(address == 0xFFFFFF00) {
+			syscall_callback(address, value);
+		return;
+	} else {
+		bus::write32(address, value);
+	}
 }
 
 void syscall_handler(int address, int value) {

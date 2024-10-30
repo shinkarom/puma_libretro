@@ -32,6 +32,7 @@ uint64_t frameNum = 0;
 int screenWidth, screenHeight, screenTotalPixels;
 void (*wh_callback)(int w, int h);
 void (*syscall_callback)(int address, int value);
+void (*audioRegistersCallback)(int reg, int value);
 
 void change_wh(int w, int h) {
 	if(w<0 || w>maxScreenWidth || h < 0 || h > maxScreenHeight) {
