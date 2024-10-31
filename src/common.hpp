@@ -3,7 +3,6 @@
 #include <cstdint>
 
 extern void (*wh_callback)(int w, int h);
-extern void (*syscall_callback)(int address, int value);
 extern void (*audioRegistersCallback)(int reg, int value);
 
 constexpr int numButtons = 12;
@@ -20,9 +19,12 @@ constexpr auto cpuClockRate = 40*1024*1024;
 constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
 constexpr auto totalMemory = 16*1024*1024;
 constexpr auto codeOffset = 0x100000;
+constexpr auto stackOffset = codeOffset;
 constexpr auto framebufferOffset = 0x200;
 constexpr auto apuRegistersOffset = 0x80000;
 constexpr auto numApuRegisters = 0x106;
+
+constexpr auto syscallAddress = 0xFFFFFF00;
 
 extern uint64_t frameNum;
 extern int screenWidth;

@@ -8,6 +8,25 @@ namespace ppu {
 	
 	static uint32_t *frame_buf;
 	
+	uint32_t palette16bit[65536];
+	
+	uint32_t convert16to32color(uint16_t color) {
+		uint8_t r, g, b;
+
+		// Extract red, green, and blue components from the 555 color
+		r = (color >> 10) & 0x1F;
+		g = (color >> 5) & 0x1F;
+		b = color & 0x1F;
+
+		// Expand each component to 8 bits
+		r = (r << 3) | (r >> 2);
+		g = (g << 3) | (g >> 2);
+		b = (b << 3) | (b >> 2);
+
+		// Combine the expanded components into a 32-bit ARGB color
+		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+	}
+	
 	void init() {
 		screenWidth = maxScreenWidth;
 		screenHeight = maxScreenHeight;
@@ -15,6 +34,10 @@ namespace ppu {
 		
 		 frame_buf = new uint32_t[maxScreenTotalPixels];
 		 memset(frame_buf,0,maxScreenTotalPixels*sizeof(uint32_t));
+		 
+		 for(int i = 0; i < 65536; i++) {
+			 palette16bit[i] = convert16to32color(i);
+		 }
 	}
 	
 	void deinit() {

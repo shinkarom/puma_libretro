@@ -11,7 +11,7 @@ namespace apu {
 	
 	void regCallback(int reg, int value) {
 		OPL3_WriteRegBuffered(&chip,reg,value);
-		std::cout<<"Audio register "<<std::hex<<reg<<" with "<<value<<std::endl;
+		std::cout<<"Audio register "<<std::hex<<reg<<" with "<<value<<std::dec<<std::endl;
 	}
 	
 	void init() {

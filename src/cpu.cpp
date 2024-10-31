@@ -7,6 +7,10 @@
 
 #include "bus.hpp"
 
+void syscall_handler(int value) {
+	std::cout<<"Syscall "<<value<<" triggered."<<std::endl;
+}
+
 unsigned int  m68k_read_memory_8(unsigned int address) {
 	auto r = bus::read8(address);
 	//std::cout<<"Read 8bit from "<<address<<": "<<r<<std::endl;
@@ -26,43 +30,83 @@ unsigned int  m68k_read_memory_32(unsigned int address) {
 }
 
 void m68k_write_memory_8(unsigned int address, unsigned int value) {
-		if(address == 0xFFFFFF00) {
-			syscall_callback(address, value);
-			return;
+		bus::write8(address, value);
+		if(address == syscallAddress) {
+			syscall_handler(value);
 		} else if (address>=apuRegistersOffset && address<apuRegistersOffset+numApuRegisters) {
 			audioRegistersCallback(address-apuRegistersOffset, value);
-		} else {
-			bus::write8(address, value);
 		}
 }
 
 void m68k_write_memory_16(unsigned int address, unsigned int value) {
-	if(address == 0xFFFFFF00) {
-		syscall_callback(address, value);
-		return;
-	} else {
-		bus::write16(address, value);
+	bus::write16(address, value);
+	if(address == syscallAddress) {
+		syscall_handler(value);
 	}
 }
 
 void m68k_write_memory_32(unsigned int address, unsigned int value) {
-	if(address == 0xFFFFFF00) {
-			syscall_callback(address, value);
-		return;
-	} else {
-		bus::write32(address, value);
+	bus::write32(address, value);
+	if(address == syscallAddress) {
+		syscall_handler(value);
 	}
 }
 
-void syscall_handler(int address, int value) {
-	std::cout<<"Syscall "<<address<<" triggered with "<<value<<std::endl;
+void push8(uint8_t value) {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp-2);
+	bus::write8(sp-1, value);
+}
+
+void push16(uint16_t value) {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp-2);
+	bus::write16(sp-2, value);
+}
+
+void push32(uint32_t value) {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp-4);
+	bus::write32(sp-4, value);
+}
+
+uint8_t peek8() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	return bus::read8(sp+1);
+}
+
+uint16_t peek16() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	return bus::read16(sp);
+}
+
+uint32_t peek32() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	return bus::read32(sp);
+}
+
+uint8_t pop8() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+2);
+	return bus::read8(sp+1);
+}
+
+uint16_t pop16() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+2);
+	return bus::read16(sp);
+}
+
+uint32_t pop32() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+4);
+	return bus::read32(sp);
 }
 
 namespace cpu {
 	void init() {
 		m68k_set_cpu_type(M68K_CPU_TYPE_68040);
 		m68k_init();
-		syscall_callback = &syscall_handler;
 	}
 	
 	void deinit() {
@@ -78,7 +122,7 @@ namespace cpu {
 	}
 	
 	void onLoad() {
-		bus::write32(0, 0x400);
+		bus::write32(0, stackOffset);
 		bus::write32(0x4, codeOffset);
 		m68k_pulse_reset();
 	}
