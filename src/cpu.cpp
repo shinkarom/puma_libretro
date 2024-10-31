@@ -7,12 +7,14 @@
 
 #include "bus.hpp"
 #include "ppu.hpp"
+#include "apu.hpp"
+#include "input.hpp"
 
 void syscall_handler(int value) {
 	//std::cout<<"Syscall "<<value<<" triggered."<<std::endl;
 	switch(value) {
 		case API_printRegisters: {
-			std::cout<<"---"<<std::endl;
+			std::cout<<"---"<<std::hex<<std::endl;
 			uint32_t t;
 			t = m68k_get_reg(nullptr, M68K_REG_D0);
 			std::cout<<t<<" ";
@@ -46,7 +48,7 @@ void syscall_handler(int value) {
 			std::cout<<t<<" ";
 			t = m68k_get_reg(nullptr, M68K_REG_A7);
 			std::cout<<t<<std::endl;
-			std::cout<<"---"<<std::endl;
+			std::cout<<std::dec<<"---"<<std::endl;
 			break;
 		}
 		case API_getDimensions:
@@ -71,6 +73,52 @@ void syscall_handler(int value) {
 			auto y = pop16();
 			auto x = pop16();
 			ppu::queueDimensionsChange(x, y);
+			break;
+		}
+		case API_getFrameNumber: {
+			push32(frameNum);
+			break;
+		}
+		case API_writeAudioRegister: {
+			auto value = pop16();
+			auto reg = pop16();
+			apu::writeReg(reg, value);
+			break;
+		}
+		case API_isPressed: {
+			auto keynum = pop16();
+			if(input::isPressed(keynum)) {
+				push16(1);
+			} else {
+				push16(0);
+			}
+			break;
+		}
+		case API_isJustPressed: {
+			auto keynum = pop16();
+			if(input::isJustPressed(keynum)) {
+				push16(1);
+			} else {
+				push16(0);
+			}
+			break;
+		}
+		case API_isJustReleased: {
+			auto keynum = pop16();
+			if(input::isJustReleased(keynum)) {
+				push16(1);
+			} else {
+				push16(0);
+			}
+			break;
+		}
+		case API_waitForVBlank: {
+			m68k_end_timeslice();
+			break;
+		}
+		case API_cls: {
+			auto color = pop32();
+			ppu::clear(color);
 			break;
 		}
 		default:
@@ -100,8 +148,6 @@ void m68k_write_memory_8(unsigned int address, unsigned int value) {
 		bus::write8(address, value);
 		if(address == syscallAddress) {
 			syscall_handler(value);
-		} else if (address>=apuRegistersOffset && address<apuRegistersOffset+numApuRegisters) {
-			audioRegistersCallback(address-apuRegistersOffset, value);
 		}
 }
 
@@ -167,7 +213,7 @@ uint16_t pop16() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+2);
 	auto result = bus::read16(sp);
-	std::cout<<"pop16: "<<result<<std::endl;
+	//std::cout<<"pop16: "<<result<<std::endl;
 	return result;
 }
 
@@ -175,7 +221,7 @@ uint32_t pop32() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+4);
 	auto result = bus::read32(sp);
-	std::cout<<"pop32: "<<result<<std::endl;
+	//std::cout<<"pop32: "<<result<<std::endl;
 	return result;
 }
 
@@ -205,8 +251,6 @@ namespace cpu {
 	}
 	
 	void frame() {
-		bus::write32(0x40200, frameNum);
-		
 		auto x = m68k_execute(cyclesPerFrame);
 		auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
 		//std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;

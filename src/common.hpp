@@ -3,7 +3,6 @@
 #include <cstdint>
 
 extern void (*wh_callback)(int w, int h);
-extern void (*audioRegistersCallback)(int reg, int value);
 
 enum {
 	API_printRegisters = 0,
@@ -11,6 +10,13 @@ enum {
 	API_setPixel,
 	API_getPixel,
 	API_setDimensions,
+	API_getFrameNumber,
+	API_writeAudioRegister,
+	API_isPressed,
+	API_isJustPressed,
+	API_isJustReleased,
+	API_waitForVBlank,
+	API_cls,
 } apiFunctions;
 
 constexpr int numButtons = 12;

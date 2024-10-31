@@ -54,14 +54,19 @@ namespace ppu {
 	}
 	
 	void beforeFrame() {
-		
-		
+			
 	}
 	
 	void afterFrame() {
 		if(pendingW!=screenWidth || pendingH!=screenHeight) {
 			wh_callback(pendingW, pendingH);
 		}
+	}
+	
+	void clear(uint32_t color) {
+		for(int i = 0; i<screenTotalPixels; i++) {
+			frame_buf[i] = color;
+		}	
 	}
 	
 	void setPixel(int x, int y, uint32_t color) {

@@ -25,6 +25,10 @@ namespace input {
 	extern uint16_t justReleasedButtons;
 	extern uint16_t previouslyPressedButtons;
 	
+	bool isPressed(int keynum);
+	bool isJustPressed(int keynum);
+	bool isJustReleased(int keynum);
+	
 	void init();
 	void beforeFrame();
 }

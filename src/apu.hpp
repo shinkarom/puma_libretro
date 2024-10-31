@@ -7,4 +7,5 @@ namespace apu {
 	void deinit();
 	void afterFrame();
 	int16_t* callback();
+	void writeReg(int reg, int value);
 }
