@@ -11,6 +11,7 @@ namespace ppu {
 	
 	void setPixel(int x, int y, uint32_t color);
 	uint32_t getPixel(int x, int y);
+	void queueDimensionsChange(int w, int h);
 	
 	uint32_t* getBuffer();
 }

@@ -67,6 +67,12 @@ void syscall_handler(int value) {
 			push32(color);
 			break;
 		}
+		case API_setDimensions: {
+			auto y = pop16();
+			auto x = pop16();
+			ppu::queueDimensionsChange(x, y);
+			break;
+		}
 		default:
 			break;
 	}
@@ -161,7 +167,7 @@ uint16_t pop16() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+2);
 	auto result = bus::read16(sp);
-	//std::cout<<"pop16: "<<result<<std::endl;
+	std::cout<<"pop16: "<<result<<std::endl;
 	return result;
 }
 
@@ -169,7 +175,7 @@ uint32_t pop32() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+4);
 	auto result = bus::read32(sp);
-	//std::cout<<"pop32: "<<result<<std::endl;
+	std::cout<<"pop32: "<<result<<std::endl;
 	return result;
 }
 

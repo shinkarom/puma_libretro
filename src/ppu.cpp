@@ -11,6 +11,8 @@ namespace ppu {
 	
 	uint32_t palette16bit[65536];
 	
+	int pendingW, pendingH;
+	
 	uint32_t convert16to32color(uint16_t color) {
 		uint8_t r, g, b;
 
@@ -31,7 +33,9 @@ namespace ppu {
 	void init() {
 		screenWidth = maxScreenWidth;
 		screenHeight = maxScreenHeight;
-		screenTotalPixels = maxScreenTotalPixels;		
+		screenTotalPixels = maxScreenTotalPixels;
+		pendingW = screenWidth;
+		pendingH = screenHeight;
 		
 		 frame_buf = new uint32_t[maxScreenTotalPixels];
 		 memset(frame_buf,0,maxScreenTotalPixels*sizeof(uint32_t));
@@ -46,30 +50,18 @@ namespace ppu {
 	}
 	
 	void afterLoad() {
-		bus::write16(0x40204, screenWidth);
-		bus::write16(0x40206, screenHeight);
+
 	}
 	
 	void beforeFrame() {
-		auto w = bus::read16(0x40204);
-		auto h = bus::read16(0x40206);
 		
-		if(w!=screenWidth || h!=screenHeight) {
-			if(w > maxScreenWidth) {
-				bus::write16(0x40204, maxScreenWidth);
-				w = maxScreenWidth;
-			}
-			if(h > maxScreenHeight) {
-				bus::write16(0x40206, maxScreenHeight);
-				h = maxScreenHeight;
-			}
-			wh_callback(w, h);
-			//TODO: chande screen dimensions
-		}
+		
 	}
 	
 	void afterFrame() {
-		
+		if(pendingW!=screenWidth || pendingH!=screenHeight) {
+			wh_callback(pendingW, pendingH);
+		}
 	}
 	
 	void setPixel(int x, int y, uint32_t color) {
@@ -85,6 +77,18 @@ namespace ppu {
 			return 0;
 		}
 		return frame_buf[y*screenWidth+x];
+	}
+	
+	void queueDimensionsChange(int w, int h) {
+		if(w > maxScreenWidth) {
+			w = maxScreenWidth;
+		}
+		if(h > maxScreenHeight) {
+			h = maxScreenHeight;
+		}
+		pendingW = w;
+		pendingH = h;
+		//std::cout<<"Queued dimensions change to "<<w<<" "<<h<<std::endl;
 	}
 	
 	uint32_t* getBuffer() {
