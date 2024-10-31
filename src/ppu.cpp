@@ -2,6 +2,7 @@
 #include "common.hpp"
 
 #include <cstring>
+#include <iostream>
 #include "bus.hpp"
 
 namespace ppu {
@@ -68,17 +69,22 @@ namespace ppu {
 	}
 	
 	void afterFrame() {
-		int i = 0;
-		int offset = framebufferOffset;
-		auto px = frame_buf;
-		do {
-			*px = bus::read32(offset);
-			i++;
-			offset+=4;
-			px++;
-		} while(i<screenTotalPixels);
-			
 		
+	}
+	
+	void setPixel(int x, int y, uint32_t color) {
+		if(x > screenWidth || y > screenHeight) {
+			return;
+		}
+		frame_buf[y*screenWidth+x] = color;
+		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<color<<std::endl;
+	}
+	
+	uint32_t getPixel(int x, int y) {
+		if(x > screenWidth || y > screenHeight) {
+			return 0;
+		}
+		return frame_buf[y*screenWidth+x];
 	}
 	
 	uint32_t* getBuffer() {

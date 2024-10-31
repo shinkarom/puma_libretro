@@ -5,6 +5,14 @@
 extern void (*wh_callback)(int w, int h);
 extern void (*audioRegistersCallback)(int reg, int value);
 
+enum {
+	API_printRegisters = 0,
+	API_getDimensions,
+	API_setPixel,
+	API_getPixel,
+	API_setDimensions,
+} apiFunctions;
+
 constexpr int numButtons = 12;
 constexpr int numKeys = 104;
 

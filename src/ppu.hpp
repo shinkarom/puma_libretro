@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cstdint"
+#include <cstdint>
 
 namespace ppu {
 	void init();
@@ -8,6 +8,9 @@ namespace ppu {
 	void afterLoad();
 	void beforeFrame();
 	void afterFrame();
+	
+	void setPixel(int x, int y, uint32_t color);
+	uint32_t getPixel(int x, int y);
 	
 	uint32_t* getBuffer();
 }

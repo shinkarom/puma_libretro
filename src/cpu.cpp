@@ -6,9 +6,70 @@
 #include <cstdint>
 
 #include "bus.hpp"
+#include "ppu.hpp"
 
 void syscall_handler(int value) {
-	std::cout<<"Syscall "<<value<<" triggered."<<std::endl;
+	//std::cout<<"Syscall "<<value<<" triggered."<<std::endl;
+	switch(value) {
+		case API_printRegisters: {
+			std::cout<<"---"<<std::endl;
+			uint32_t t;
+			t = m68k_get_reg(nullptr, M68K_REG_D0);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D1);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D2);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D3);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D4);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D5);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D6);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_D7);
+			std::cout<<t<<std::endl;
+			t = m68k_get_reg(nullptr, M68K_REG_A0);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A1);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A2);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A3);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A4);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A5);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A6);
+			std::cout<<t<<" ";
+			t = m68k_get_reg(nullptr, M68K_REG_A7);
+			std::cout<<t<<std::endl;
+			std::cout<<"---"<<std::endl;
+			break;
+		}
+		case API_getDimensions:
+			push16(screenWidth);
+			push16(screenHeight);
+			break;
+		case API_setPixel: {
+			auto color = pop32();
+			auto y = pop16();
+			auto x = pop16();
+			ppu::setPixel(x, y, color);
+			break; 
+		}
+		case API_getPixel: {
+			auto y = pop16();
+			auto x = pop16();
+			auto color = ppu::getPixel(x, y);
+			push32(color);
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 unsigned int  m68k_read_memory_8(unsigned int address) {
@@ -56,18 +117,21 @@ void push8(uint8_t value) {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp-2);
 	bus::write8(sp-1, value);
+	//std::cout<<"push8: "<<(int)(value)<<std::endl;
 }
 
 void push16(uint16_t value) {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp-2);
 	bus::write16(sp-2, value);
+	//std::cout<<"push16: "<<value<<std::endl;
 }
 
 void push32(uint32_t value) {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp-4);
 	bus::write32(sp-4, value);
+	//std::cout<<"push32: "<<value<<std::endl;
 }
 
 uint8_t peek8() {
@@ -88,19 +152,25 @@ uint32_t peek32() {
 uint8_t pop8() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+2);
-	return bus::read8(sp+1);
+	auto result = bus::read8(sp+1);
+	//std::cout<<"pop8: "<<(int)(result)<<std::endl;
+	return result;
 }
 
 uint16_t pop16() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+2);
-	return bus::read16(sp);
+	auto result = bus::read16(sp);
+	//std::cout<<"pop16: "<<result<<std::endl;
+	return result;
 }
 
 uint32_t pop32() {
 	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
 	m68k_set_reg(M68K_REG_SP, sp+4);
-	return bus::read32(sp);
+	auto result = bus::read32(sp);
+	//std::cout<<"pop32: "<<result<<std::endl;
+	return result;
 }
 
 void silentPop8() {
