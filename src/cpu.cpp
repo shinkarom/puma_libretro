@@ -103,6 +103,21 @@ uint32_t pop32() {
 	return bus::read32(sp);
 }
 
+void silentPop8() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+2);
+}
+
+void silentPop16() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+2);
+}
+
+void silentPop32() {
+	auto sp = m68k_get_reg(nullptr, M68K_REG_SP);
+	m68k_set_reg(M68K_REG_SP, sp+4);
+}
+
 namespace cpu {
 	void init() {
 		m68k_set_cpu_type(M68K_CPU_TYPE_68040);
