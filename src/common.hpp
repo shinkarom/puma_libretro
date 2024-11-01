@@ -4,21 +4,6 @@
 
 extern void (*wh_callback)(int w, int h);
 
-enum {
-	API_printRegisters = 0,
-	API_getDimensions,
-	API_setPixel,
-	API_getPixel,
-	API_setDimensions,
-	API_getFrameNumber,
-	API_writeAudioRegister,
-	API_isPressed,
-	API_isJustPressed,
-	API_isJustReleased,
-	API_waitForVBlank,
-	API_cls,
-} apiFunctions;
-
 constexpr int numButtons = 12;
 constexpr int numInputs = 130;
 

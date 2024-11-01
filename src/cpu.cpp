@@ -10,45 +10,65 @@
 #include "apu.hpp"
 #include "input.hpp"
 
+enum {
+	API_printRegisters = 0,
+	API_getDimensions,
+	API_setPixel,
+	API_getPixel,
+	API_setDimensions,
+	API_getFrameNumber,
+	API_writeAudioRegister,
+	API_isPressed,
+	API_isJustPressed,
+	API_isJustReleased,
+	API_waitForVBlank,
+	API_cls,
+	API_drawSprite,
+};
+
+void printRegisters() {
+	std::cout<<"---"<<std::hex<<std::endl;
+	uint32_t t;
+	t = m68k_get_reg(nullptr, M68K_REG_D0);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D1);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D2);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D3);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D4);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D5);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D6);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_D7);
+	std::cout<<t<<std::endl;
+	t = m68k_get_reg(nullptr, M68K_REG_A0);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A1);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A2);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A3);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A4);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A5);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A6);
+	std::cout<<t<<" ";
+	t = m68k_get_reg(nullptr, M68K_REG_A7);
+	std::cout<<t<<std::endl;
+	std::cout<<std::dec<<"---"<<std::endl;
+}
+
 void syscall_handler(int value) {
 	//std::cout<<"Syscall "<<value<<" triggered."<<std::endl;
 	switch(value) {
 		case API_printRegisters: {
-			std::cout<<"---"<<std::hex<<std::endl;
-			uint32_t t;
-			t = m68k_get_reg(nullptr, M68K_REG_D0);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D1);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D2);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D3);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D4);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D5);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D6);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_D7);
-			std::cout<<t<<std::endl;
-			t = m68k_get_reg(nullptr, M68K_REG_A0);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A1);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A2);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A3);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A4);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A5);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A6);
-			std::cout<<t<<" ";
-			t = m68k_get_reg(nullptr, M68K_REG_A7);
-			std::cout<<t<<std::endl;
-			std::cout<<std::dec<<"---"<<std::endl;
+			printRegisters();
 			break;
 		}
 		case API_getDimensions:
@@ -119,6 +139,17 @@ void syscall_handler(int value) {
 		case API_cls: {
 			auto color = pop32();
 			ppu::clear(color);
+			break;
+		}
+		case API_drawSprite: {
+			auto options = pop32();
+			auto transparentColor = pop32();
+			auto h = pop16();
+			auto w = pop16();
+			auto y = pop16();
+			auto x = pop16();
+			auto address = pop32();
+			ppu::drawSprite(address, x, y, w, h, transparentColor, options);
 			break;
 		}
 		default:
