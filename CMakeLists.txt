@@ -14,7 +14,7 @@ target_include_directories(musashi PUBLIC src/musashi)
 
 add_library(${LIBNAME} SHARED 
     src/libretro.cpp
-	src/opl3.c
+	src/cmixer.c
 	src/apu.cpp
 	src/cpu.cpp
 	src/bus.cpp
