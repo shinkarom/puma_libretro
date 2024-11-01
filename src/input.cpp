@@ -6,35 +6,37 @@
 #include <iostream>
 
 namespace input {
-	uint16_t pressedButtons;
-	uint16_t justPressedButtons;
-	uint16_t justReleasedButtons;
-	uint16_t previouslyPressedButtons;
+	bool pressedInputs[numInputs];
+	bool justPressedInputs[numInputs];
+	bool justReleasedInputs[numInputs];
+	bool previouslyPressedInputs[numInputs];
 	
 	void init() {
-		previouslyPressedButtons = 0;
+		for (int i = 0; i< numInputs; i++) {
+			previouslyPressedInputs[i] = false;
+		}
 	}
 	
 	bool isPressed(int keynum) {
-		if(keynum > numButtons) {
+		if(keynum > numInputs) {
 			return false;
 		}
-		bool result = (pressedButtons & (1<<keynum) != 0);
+		bool result = pressedInputs[keynum];
 		return result;
 	}
 	
 	bool isJustPressed(int keynum) {
-		if(keynum > numButtons) {
+		if(keynum > numInputs) {
 			return false;
 		}
-		return (justPressedButtons & (1<<keynum) != 0);
+		return justPressedInputs[keynum];
 	}
 	
 	bool isJustReleased(int keynum) {
-		if(keynum > numButtons) {
+		if(keynum > numInputs) {
 			return false;
 		}
-		return (justReleasedButtons & (1<<keynum) != 0);
+		return justReleasedInputs[keynum];
 	}
 	
 	void beforeFrame() {

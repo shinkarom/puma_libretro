@@ -20,7 +20,7 @@ enum {
 } apiFunctions;
 
 constexpr int numButtons = 12;
-constexpr int numKeys = 104;
+constexpr int numInputs = 130;
 
 constexpr auto maxScreenWidth = 256;
 constexpr auto maxScreenHeight = 256;
@@ -32,10 +32,8 @@ constexpr int samplesPerFrame = audioSampleRate / framesPerSecond;
 constexpr auto cpuClockRate = 40*1024*1024;
 constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
 constexpr auto totalMemory = 16*1024*1024;
-constexpr auto codeOffset = 0x100000;
+constexpr auto codeOffset = 0x4000;
 constexpr auto stackOffset = codeOffset;
-constexpr auto framebufferOffset = 0x200;
-constexpr auto apuRegistersOffset = 0x80000;
 constexpr auto numApuRegisters = 0x106;
 
 constexpr auto syscallAddress = 0xFFFFFF00;

@@ -174,19 +174,18 @@ void retro_reset(void)
 
 static void update_input(void)
 {
-	input::previouslyPressedButtons = input::pressedButtons;
-	input::pressedButtons = 0;
 	uint16_t state;
 	
-	for (int i = 0; i< numButtons; i++) {
-		state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, input::buttonMapping[i]);
-		if(state) {
-			input::pressedButtons |= (1 <<i);
-		}
+	for (int i = 0; i< numInputs; i++) {
+		input::previouslyPressedInputs[i] = input::pressedInputs[i];
+		auto device = (i < numButtons) ? RETRO_DEVICE_JOYPAD : RETRO_DEVICE_KEYBOARD;
+		state = input_state_cb(0, device, 0, input::inputMapping[i]);
+		input::pressedInputs[i] = (state != 0);
+		input::justPressedInputs[i] = (! input::previouslyPressedInputs[i]) && input::pressedInputs[i];
+		input::justReleasedInputs[i] = input::previouslyPressedInputs[i] & (! input::pressedInputs[i]);
 	}
 	
-	input::justPressedButtons = (~ input::previouslyPressedButtons) & input::pressedButtons;
-	input::justReleasedButtons = input::previouslyPressedButtons & (~ input::pressedButtons);
+	
 }
 
 
