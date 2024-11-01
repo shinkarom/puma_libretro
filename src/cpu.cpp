@@ -76,7 +76,7 @@ void syscall_handler(int value) {
 			push16(screenHeight);
 			break;
 		case API_setPixel: {
-			auto color = pop32();
+			auto color = pop16();
 			auto y = pop16();
 			auto x = pop16();
 			ppu::setPixel(x, y, color);
@@ -86,7 +86,7 @@ void syscall_handler(int value) {
 			auto y = pop16();
 			auto x = pop16();
 			auto color = ppu::getPixel(x, y);
-			push32(color);
+			push16(color);
 			break;
 		}
 		case API_setDimensions: {
@@ -143,13 +143,12 @@ void syscall_handler(int value) {
 		}
 		case API_drawSprite: {
 			auto options = pop32();
-			auto transparentColor = pop32();
 			auto h = pop16();
 			auto w = pop16();
 			auto y = pop16();
 			auto x = pop16();
 			auto address = pop32();
-			ppu::drawSprite(address, x, y, w, h, transparentColor, options);
+			ppu::drawSprite(address, x, y, w, h, options);
 			break;
 		}
 		default:

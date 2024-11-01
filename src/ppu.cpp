@@ -96,7 +96,7 @@ namespace ppu {
 		}	
 	}
 	
-	void setPixel(int x, int y, uint32_t color) {
+	void setPixel(int x, int y, uint16_t color) {
 		if(x > screenWidth || y > screenHeight) {
 			return;
 		}
@@ -104,7 +104,7 @@ namespace ppu {
 		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<color<<std::endl;
 	}
 	
-	uint32_t getPixel(int x, int y) {
+	uint16_t getPixel(int x, int y) {
 		if(x > screenWidth || y > screenHeight) {
 			return 0;
 		}
@@ -123,7 +123,7 @@ namespace ppu {
 		//std::cout<<"Queued dimensions change to "<<w<<" "<<h<<std::endl;
 	}
 	
-	void drawSprite(uint32_t address, int x, int y, int w, int h, uint32_t transparentColor, uint32_t options) {
+	void drawSprite(uint32_t address, int x, int y, int w, int h, uint32_t options) {
 		//std::cout<<std::hex<<"Will draw sprite from "<<address<<std::dec<<std::endl;
 		auto pxa = address;
 		for(int hh = 0, posy = y; hh < h; hh++, posy++) {
@@ -133,7 +133,7 @@ namespace ppu {
 				pxa += 2;
 				if(posx >= screenWidth || posy >= screenHeight) continue;
 				int pos = posy * screenWidth + posx;
-				if(color == transparentColor) continue;
+				if(color & 0xFF000000) continue;
 				frame_buf[pos] = color;
 			}
 		}
