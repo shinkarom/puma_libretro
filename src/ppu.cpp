@@ -14,9 +14,10 @@ namespace ppu {
 	int pendingW, pendingH;
 	
 	uint32_t convert16to32color(uint16_t color) {
-		uint8_t r, g, b;
+		uint8_t r, g, b, a;
 
-		// Extract red, green, and blue components from the 555 color
+		// Extract alpha, red, green, and blue components from the 16-bit color
+		a = (color & 0x8000) ? 0xFF : 0x00; // Check the 16th bit for alpha
 		r = (color >> 10) & 0x1F;
 		g = (color >> 5) & 0x1F;
 		b = color & 0x1F;
@@ -27,8 +28,33 @@ namespace ppu {
 		b = (b << 3) | (b >> 2);
 
 		// Combine the expanded components into a 32-bit ARGB color
-		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
+	
+	uint16_t convert32to16color(uint32_t color) {
+		uint8_t r, g, b, a;
+
+		// Extract alpha, red, green, and blue components from the 32-bit ARGB color
+		a = (color >> 24) & 0xFF;
+		r = (color >> 16) & 0xFF;
+		g = (color >> 8) & 0xFF;
+		b = color & 0xFF;
+
+		// Compress each component to 5 bits
+		r = (r >> 3) & 0x1F;
+		g = (g >> 3) & 0x1F;
+		b = (b >> 3) & 0x1F;
+
+		// Set the 16th bit based on the alpha channel
+		uint16_t result = (r << 10) | (g << 5) | b;
+		if (a > 0) {
+			result |= 0x8000; // Set the 16th bit
+		}
+
+		return result;
+	}	
+	
+	
 	
 	void init() {
 		screenWidth = maxScreenWidth;
@@ -43,6 +69,7 @@ namespace ppu {
 		 for(int i = 0; i < 65536; i++) {
 			 palette16bit[i] = convert16to32color(i);
 		 }
+		 
 	}
 	
 	void deinit() {
@@ -73,7 +100,7 @@ namespace ppu {
 		if(x > screenWidth || y > screenHeight) {
 			return;
 		}
-		frame_buf[y*screenWidth+x] = color;
+		frame_buf[y*screenWidth+x] = palette16bit[color];
 		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<color<<std::endl;
 	}
 	
@@ -81,7 +108,7 @@ namespace ppu {
 		if(x > screenWidth || y > screenHeight) {
 			return 0;
 		}
-		return frame_buf[y*screenWidth+x];
+		return convert32to16color(frame_buf[y*screenWidth+x]);
 	}
 	
 	void queueDimensionsChange(int w, int h) {
@@ -101,9 +128,9 @@ namespace ppu {
 		auto pxa = address;
 		for(int hh = 0, posy = y; hh < h; hh++, posy++) {
 			for(int ww = 0, posx = x; ww < w; ww++, posx++) {
-				auto color = bus::read32(pxa);
+				auto color = palette16bit[bus::read16(pxa)];
 				//std::cout<<std::hex<<pxa<<" "<<color<<std::dec<<std::endl;
-				pxa += 4;
+				pxa += 2;
 				if(posx >= screenWidth || posy >= screenHeight) continue;
 				int pos = posy * screenWidth + posx;
 				if(color == transparentColor) continue;

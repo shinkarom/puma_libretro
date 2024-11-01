@@ -43,7 +43,6 @@ namespace apu {
 		source = cm_new_source(&sourceInfo);
 		cm_set_master_gain(1);
 		cm_set_loop(source, 1);
-		cm_play(source);
 	}
 	
 	void deinit() {
@@ -63,6 +62,18 @@ namespace apu {
 		if(reg > numApuRegisters || value > INT8_MAX) {
 			return;
 		}
-		std::cout<<"Audio register "<<std::hex<<reg<<" with "<<value<<std::dec<<std::endl;
+		switch(reg) {
+			case 0: {
+				if(value == 0) {
+					cm_stop(source);
+				} else {
+					cm_play(source);
+				}
+				break;
+			}
+			default:
+				break;
+		}
+		//std::cout<<"Audio register "<<std::hex<<reg<<" with "<<value<<std::dec<<std::endl;
 	}
 }
