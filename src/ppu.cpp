@@ -125,16 +125,29 @@ namespace ppu {
 	
 	void drawSprite(uint32_t address, int x, int y, int w, int h, uint32_t options) {
 		//std::cout<<std::hex<<"Will draw sprite from "<<address<<std::dec<<std::endl;
+		auto x_start = x;
+		auto x_delta = 1;
+		auto x_end = x+w;
+		auto y_start = y;
+		auto y_delta = 1;
+		auto y_end = y+h;
+		
 		auto pxa = address;
-		for(int hh = 0, posy = y; hh < h; hh++, posy++) {
-			for(int ww = 0, posx = x; ww < w; ww++, posx++) {
-				auto color = palette16bit[bus::read16(pxa)];
-				//std::cout<<std::hex<<pxa<<" "<<color<<std::dec<<std::endl;
-				pxa += 2;
-				if(posx >= screenWidth || posy >= screenHeight) continue;
-				int pos = posy * screenWidth + posx;
-				if(color & 0xFF000000) continue;
-				frame_buf[pos] = color;
+		auto xx = x_start;
+		auto yy = y_start;
+		for(int _i = 0; _i < w * h; _i++) {
+			auto color = palette16bit[bus::read16(pxa)];
+			pxa += 2;
+			auto coord = yy*screenWidth+xx;
+			if(color & 0xFF000000 || xx >= screenWidth || yy >= screenHeight) {
+				
+			} else {
+				frame_buf[coord] = color;	
+			}
+			xx+=x_delta;
+			if(xx >= x_end) {
+				xx = x_start;
+				yy+=y_delta;
 			}
 		}
 		//std::cout<<"---"<<std::endl;
