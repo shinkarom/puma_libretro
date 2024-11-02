@@ -92,7 +92,10 @@ void syscall_handler(int value) {
 		case API_setDimensions: {
 			auto y = bus::pop16();
 			auto x = bus::pop16();
-			ppu::queueDimensionsChange(x, y);
+			if(x > maxScreenWidth / 16 || y > maxScreenHeight / 16) {
+				break;
+			}
+			ppu::queueDimensionsChange(x*16, y*16);
 			break;
 		}
 		case API_getFrameNumber: {
