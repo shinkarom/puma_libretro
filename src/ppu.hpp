@@ -14,8 +14,7 @@ namespace ppu {
 	uint16_t getPixel(int x, int y);
 	void queueDimensionsChange(int w, int h);
 	void clear(uint32_t color);
-	void drawSprite(uint32_t address, int x, int y, int w, int h, uint32_t options);
-	void setPixelType(int value);
+	void drawSprite(uint32_t address, int x, int y, int w, int h, uint16_t options);
 	
 	uint32_t* getBuffer();
 }

@@ -18,6 +18,7 @@
 #include "bus.hpp"
 #include "ppu.hpp"
 #include "input.hpp"
+#include "color.hpp"
 
 static struct retro_log_callback logging;
 static retro_log_printf_t log_cb;
@@ -69,6 +70,7 @@ void retro_init(void)
    
    input::init();
    apu::init();
+   color::init();
    ppu::init();
    cpu::init();
 }
