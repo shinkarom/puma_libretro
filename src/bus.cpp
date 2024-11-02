@@ -8,6 +8,11 @@ namespace bus {
 	
 	uint8_t memory[totalMemory];
 	
+	constexpr auto syscallStackSize = 1024;
+	int syscallStackTop = 0;
+	
+	uint32_t syscallStack[syscallStackSize];
+	
 	void write8(uint32_t address, uint8_t value) {
 		if(address>totalMemory)
 			return;
@@ -48,6 +53,48 @@ namespace bus {
 			return 0;
 		auto r = (memory[address]<<24)|(memory[address+1]<<16)|(memory[address+2]<<8)|(memory[address+3]);
 		return r;
+	}
+	
+	void push8(uint8_t value) {
+		if(syscallStackTop < syscallStackSize) {
+			syscallStack[syscallStackTop++] = value;
+		}
+	}
+	
+	void push16(uint16_t value) {
+		if(syscallStackTop < syscallStackSize) {
+			syscallStack[syscallStackTop++] = value;
+		}
+	}
+	
+	void push32(uint32_t value) {
+		if(syscallStackTop < syscallStackSize) {
+			syscallStack[syscallStackTop++] = value;
+		}
+	}
+	
+	uint8_t pop8() {
+		if(syscallStackTop < 0) {
+			return 0;
+		} else {
+			return syscallStack[--syscallStackTop] & 0xFF;
+		}
+	}
+	
+	uint16_t pop16() {
+		if(syscallStackTop < 0) {
+			return 0;
+		} else {
+			return syscallStack[--syscallStackTop] & 0xFFFF;
+		}
+	}
+	
+	uint32_t pop32() {
+		if(syscallStackTop < 0) {
+			return 0;
+		} else {
+			return syscallStack[--syscallStackTop];
+		}
 	}
 	
 	bool load(char* fileName) {

@@ -16,12 +16,13 @@ constexpr auto framesPerSecond = 60;
 constexpr int samplesPerFrame = audioSampleRate / framesPerSecond;
 constexpr auto cpuClockRate = 40*1024*1024;
 constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
-constexpr auto totalMemory = 16*1024*1024;
+constexpr auto totalMemory = 256*1024*1024;
 constexpr auto codeOffset = 0x4000;
 constexpr auto stackOffset = codeOffset;
 constexpr auto numApuRegisters = 0x106;
 
-constexpr auto syscallAddress = 0xFFFFFF00;
+constexpr auto syscallStackAddress = 0xFFFFFFF9;
+constexpr auto syscallAddress = 0xFFFFFFFC;
 
 extern uint64_t frameNum;
 extern int screenWidth;
