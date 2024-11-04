@@ -16,8 +16,9 @@ constexpr auto framesPerSecond = 60;
 constexpr int samplesPerFrame = audioSampleRate / framesPerSecond;
 constexpr auto cpuClockRate = 40*1024*1024;
 constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
-constexpr auto totalMemory = 256*1024*1024;
-constexpr auto codeOffset = 0x4000;
+constexpr auto totalMemory = 64*1024*1024;
+constexpr auto ramSize = 8 * 1024 * 1024;
+constexpr auto codeOffset = ramSize;
 constexpr auto stackOffset = codeOffset;
 constexpr auto numApuRegisters = 0x106;
 
