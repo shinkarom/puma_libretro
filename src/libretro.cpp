@@ -199,10 +199,13 @@ static void check_variables(void)
 static void audio_callback(void)
 {
    int16_t* buf = apu::callback();
-   
-   for(int i = 0; i<samplesPerFrame; i++) {
-	   audio_cb(*buf++, *buf++);
-   }
+   /*
+   for(int i = 0; i<samplesPerFrame;i++){
+		std::cout<<buf[i*2]<<std::endl;
+	}
+	std::cout<<"---"<<std::endl;
+	*/
+	audio_batch_cb(buf, samplesPerFrame);
    
 }
 

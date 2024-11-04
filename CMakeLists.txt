@@ -21,6 +21,7 @@ add_library(${LIBNAME} SHARED
 	src/ppu.cpp
 	src/input.cpp
 	src/color.cpp
+	src/channel.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1
