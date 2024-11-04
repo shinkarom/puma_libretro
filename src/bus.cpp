@@ -20,14 +20,14 @@ namespace bus {
 	}
 	
 	void write16(uint32_t address, uint16_t value) {
-		if(address>=ramSize)
+		if(address+1 >= ramSize)
 			return;
 		memory[address] = (value>>8)&0xFF;
 		memory[address+1] = (value)&0xFF;
 	}
 	
 	void write32(uint32_t address, uint32_t value) {
-		 if(address>=ramSize)
+		 if(address+3 >= ramSize)
 			return;
 		memory[address] =  (value>>24)&0xFF;
 		memory[address+1] =  (value>>16)&0xFF;
