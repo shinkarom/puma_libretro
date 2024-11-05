@@ -32,14 +32,12 @@ target_include_directories(nes_snd PUBLIC
 
 add_library(${LIBNAME} SHARED 
     src/libretro.cpp
-	src/cmixer.c
 	src/apu.cpp
 	src/cpu.cpp
 	src/bus.cpp
 	src/ppu.cpp
 	src/input.cpp
 	src/color.cpp
-	src/channel.cpp
     )
 set_target_properties(${LIBNAME} PROPERTIES
     SOVERSION 1

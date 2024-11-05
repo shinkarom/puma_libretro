@@ -24,7 +24,6 @@ enum {
 	API_waitForVBlank,
 	API_cls,
 	API_drawSprite,
-	API_initAudioChannel,
 };
 
 void printRegisters() {
@@ -151,13 +150,6 @@ void syscall_handler(int value) {
 			auto address = bus::pop32();
 			ppu::drawSprite(address, x, y, w, h, options);
 			break;
-		}
-		case API_initAudioChannel: {
-			auto smplRate = bus::pop16();
-			auto end = bus::pop32();
-			auto start = bus::pop32();
-			auto chanNum = bus::pop16();
-			apu::initChannel(chanNum, start, end, smplRate);
 		}
 		default:
 			break;

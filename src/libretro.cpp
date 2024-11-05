@@ -201,11 +201,11 @@ static void audio_callback(void)
    int16_t* buf = apu::callback();
    /*
    for(int i = 0; i<samplesPerFrame;i++){
-		std::cout<<buf[i*2]<<std::endl;
+		std::cout<<buf[i*2]<<" "<<buf[i*2+1]<<std::endl;
 	}
 	std::cout<<"---"<<std::endl;
 	*/
-	audio_batch_cb(buf, samplesPerFrame);
+	audio_batch_cb(buf, samplesPerFrame-1);
    
 }
 
@@ -224,9 +224,9 @@ void retro_run(void)
 	cpu::frame();
 	ppu::afterFrame();
 	 apu::afterFrame();
-
+	//audio_callback();
 	video_cb(ppu::getBuffer(), screenWidth, screenHeight, screenWidth*sizeof(uint32_t)); 
-	
+
 	frameNum++;
 
    bool updated = false;
