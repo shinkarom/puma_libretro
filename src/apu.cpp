@@ -19,7 +19,7 @@ namespace apu {
 		cm_init(audioSampleRate);
 		
 		channel::init();
-		chan.init();
+		chan.init(0, 32, 14080);
 	}
 	
 	void deinit() {
@@ -52,5 +52,10 @@ namespace apu {
 				break;
 		}
 		//std::cout<<"Audio register "<<std::hex<<reg<<" with "<<value<<std::dec<<std::endl;
+	}
+	
+	void initChannel(int chanNum, uint32_t start, uint32_t end, int smplRate) {
+		//std::cout<<"Will do channel init with "<<start<<" "<<end<<" "<<smplRate<<std::endl;
+		chan.init(start, end, smplRate);
 	}
 }

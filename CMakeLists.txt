@@ -12,6 +12,24 @@ add_library(musashi STATIC
 )
 target_include_directories(musashi PUBLIC src/musashi)
 
+add_library(nes_snd STATIC
+	vendor/Nes_Snd_Emu/Simple_Apu.cpp
+	vendor/Nes_Snd_Emu/nes_apu/apu_snapshot.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Blip_Buffer.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Multi_Buffer.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Nes_Apu.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Nes_Namco.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Nes_Oscs.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Nes_Vrc6.cpp
+	vendor/Nes_Snd_Emu/nes_apu/Nonlinear_Buffer.cpp
+	
+)
+target_include_directories(nes_snd PUBLIC 
+	vendor/Nes_Snd_Emu
+	vendor/Nes_Snd_Emu/boost
+	vendor/Nes_Snd_Emu/nes_apu
+)
+
 add_library(${LIBNAME} SHARED 
     src/libretro.cpp
 	src/cmixer.c
@@ -28,5 +46,5 @@ set_target_properties(${LIBNAME} PROPERTIES
     PUBLIC_HEADER src/libretro.h
     LINKER_LANGUAGE CXX
 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-target_link_libraries(${LIBNAME} musashi)
+target_link_libraries(${LIBNAME} musashi nes_snd)
 target_include_directories(${LIBNAME} PUBLIC src)
