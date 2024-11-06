@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.hpp"
-#include "Simple_Apu.h"
 #include <cstdint>
 
 namespace apu {

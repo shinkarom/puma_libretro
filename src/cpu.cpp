@@ -229,7 +229,8 @@ namespace cpu {
 	
 	void frame() {
 		auto x = m68k_execute(cyclesPerFrame);
-		auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
+		m68k_set_irq(2);
+		//auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
 		//std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
 	}
 	

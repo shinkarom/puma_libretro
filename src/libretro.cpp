@@ -205,7 +205,7 @@ static void audio_callback(void)
 	}
 	std::cout<<"---"<<std::endl;
 	*/
-	audio_batch_cb(buf, samplesPerFrame-1);
+	audio_batch_cb(buf, samplesPerFrame);
    
 }
 
