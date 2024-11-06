@@ -72,10 +72,13 @@ void syscall_handler(int value) {
 			printRegisters();
 			break;
 		}
-		case API_getDimensions:
-			bus::push16(screenWidth);
-			bus::push16(screenHeight);
+		case API_getDimensions:{
+			//bus::push16(screenWidth);
+			//bus::push16(screenHeight);
+			auto mode = (screenWidth-16) + ((screenHeight-16)/16);
+			bus::push16(mode);
 			break;
+		}
 		case API_setPixel: {
 			auto color = bus::pop16();
 			auto y = bus::pop16();
@@ -91,9 +94,12 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_setDimensions: {
-			auto y = bus::pop16();
-			auto x = bus::pop16();
-			ppu::queueDimensionsChange(x, y);
+			//auto y = bus::pop16();
+			//auto x = bus::pop16();
+			auto mode = bus::pop16();
+			auto w = ((mode&0xF0)+16);
+			auto h = ((mode&0x0F)+1)*16;
+			ppu::queueDimensionsChange(w, h);
 			break;
 		}
 		case API_getFrameNumber: {
