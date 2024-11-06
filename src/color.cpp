@@ -1,5 +1,7 @@
 #include "color.hpp"
 
+#include <iostream>
+
 namespace color {
 	
 	uint32_t palette16bit[65536];
@@ -83,12 +85,14 @@ namespace color {
 		uint8_t g_2bit = (color >> 2) & 0x03;
 		uint8_t b_2bit = color & 0x03;
 
-		uint8_t a = a_bit ? 0xFF : 0x00; // Full transparency or fully opaque
+		uint8_t a = a_bit ? 0x00 : 0xFF; // Full transparency or fully opaque
 		uint8_t r = (r_2bit << 6) | (r_2bit << 4) | (r_2bit << 2) | r_2bit;
 		uint8_t g = (g_2bit << 6) | (g_2bit << 4) | (g_2bit << 2) | g_2bit;
 		uint8_t b = (b_2bit << 6) | (b_2bit << 4) | (b_2bit << 2) | b_2bit;
-
-		return (a << 24) | (r << 16) | (g << 8) | b;
+		
+		uint32_t result = (a << 24) | (r << 16) | (g << 8) | b;
+		//std::cout<<std::hex<<(int)(color)<<" "<<(int)(a_bit)<<" "<<(int)(r_2bit)<<" "<<(int)(g_2bit)<<" "<<(int)(b_2bit)<<" "<<result<<std::dec<<std::endl;
+		return result;
 	}
 
 	// Convert ARGB8888 to 4-bit color (ARGB1111)

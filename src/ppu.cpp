@@ -14,13 +14,14 @@ namespace ppu {
 	static uint32_t *frame_buf;
 	
 	int pendingW, pendingH;
+	int bitOffset;
 	
 	void setFullPixel(int x, int y, uint32_t color) {
 		if(x < 0 || x > screenWidth || y<0 || y > screenHeight || (color&0xFF000000!=0xFF000000)) {
 			return;
 		}
 		frame_buf[y*screenWidth+x] = color;
-		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<color<<std::endl;
+		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<std::hex<<color<<std::dec<<std::endl;
 	}
 	
 	void init() {
@@ -85,6 +86,7 @@ namespace ppu {
 	
 	void drawSprite(uint32_t address, int x, int y, int w, int h, uint16_t options) {
 		//std::cout<<std::hex<<"Will draw sprite from "<<address<<std::dec<<std::endl;
+		bitOffset = 0;
 		auto x_start = x;
 		auto x_delta = 1;
 		auto x_end = x+w;
@@ -116,10 +118,23 @@ namespace ppu {
 		auto pxa = address;
 		auto xx = x_start;
 		auto yy = y_start;
+		uint32_t color;
 		for(int _i = 0; _i < w * h; _i++) {
-			auto color = color::palette16bit[bus::read16(pxa)];
-			pxa += 2;
-			//std::cout<<xx<<" "<<yy<<std::endl;
+			switch((options&0xFF00)>>8) {
+				case 1: {
+					auto c = bus::read8(pxa);
+					color = color::palette8bit[c];
+					pxa += 1;
+					break;
+				}
+				default: {
+					color = color::palette16bit[bus::read16(pxa)];
+					pxa += 2;
+					break;
+				}
+			}
+			
+			//std::cout<<xx<<" "<<yy<<" "<<std::hex<<color<<std::dec<<std::endl;
 			setFullPixel(xx, yy, color);
 			xx+=x_delta;
 			bool lineEnd = (x_delta>0) ? (xx >= x_end) : (xx < x_end);
