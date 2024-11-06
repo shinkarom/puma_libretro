@@ -106,7 +106,7 @@ namespace bus {
 		std::streampos fileSize = file.tellg();
 		file.seekg(0, std::ios::beg);
 		
-		if(fileSize > totalMemory-codeOffset) {
+		if(fileSize > maxFileSize) {
 			return false;
 		}
 		

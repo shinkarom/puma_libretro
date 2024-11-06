@@ -24,6 +24,7 @@ enum {
 	API_waitForVBlank,
 	API_cls,
 	API_drawSprite,
+	API_setDMCStart,
 };
 
 void printRegisters() {
@@ -149,6 +150,12 @@ void syscall_handler(int value) {
 			auto x = bus::pop16();
 			auto address = bus::pop32();
 			ppu::drawSprite(address, x, y, w, h, options);
+			break;
+		}
+		case API_setDMCStart: {
+			auto end = bus::pop32();
+			auto start = bus::pop32();
+			apu::setDMCStart(start, end);
 			break;
 		}
 		default:

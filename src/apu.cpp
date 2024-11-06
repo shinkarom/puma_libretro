@@ -3,12 +3,16 @@
 #include <iostream>
 
 #include "common.hpp"
+#include "bus.hpp"
 
 int16_t audioBuffer[samplesPerFrame*2];
 Simple_Apu nesApu;
+uint32_t dmcStartAddress;
 
-int dmc_reader( void* user_data, cpu_addr_t ){
-	return 0;
+int dmc_reader( void* user_data, cpu_addr_t addr){
+	auto address = dmcStartAddress + (addr - fakeDMCStartAddress);
+	auto r = bus::read8(address);
+	return r;
 }
 
 namespace apu {
@@ -55,11 +59,21 @@ namespace apu {
 		}
 		int val = value & 0xFF;
 		int r = reg + 0x4000;
-		if(reg == 14 || reg == 16) {
+		if(reg == 0x14 || reg == 0x16) {
 			return;
 		}
 		nesApu.write_register(r, val);
 		//std::cout<<"Audio register "<<std::hex<<r<<" with "<<val<<std::dec<<std::endl;
+	}
+	
+	void setDMCStart(uint32_t start, uint32_t end) {
+		if(start >= totalMemory || end >= totalMemory) {
+			return;
+		}
+		dmcStartAddress = start;
+		auto len = (end - start - 1) / 16;
+		nesApu.write_register(0x4012, 0x00);
+		nesApu.write_register(0x4013, len);
 	}
 	
 }
