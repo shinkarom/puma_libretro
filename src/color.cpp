@@ -26,7 +26,7 @@ namespace color {
 		uint8_t r, g, b, a;
 
 		// Extract alpha, red, green, and blue components from the 16-bit color
-		a = (color & 0x8000) ? 0xFF : 0x00; // Check the 16th bit for alpha
+		a = (color & 0x8000) ? 0x00 : 0xFF; // Check the 16th bit for alpha
 		r = (color >> 10) & 0x1F;
 		g = (color >> 5) & 0x1F;
 		b = color & 0x1F;
@@ -70,7 +70,7 @@ namespace color {
 		uint8_t g = (color >> 8) & 0xFF;
 		uint8_t b = color & 0xFF;
 
-		uint8_t a_bit = (a >= 128) ? 1 : 0; // 1-bit transparency (opaque if alpha >= 128)
+		uint8_t a_bit = (a > 0) ? 1 : 0; // 1-bit transparency (opaque if alpha >= 128)
 		uint8_t r_2bit = (r >> 6) & 0x03; // 2-bit red
 		uint8_t g_2bit = (g >> 6) & 0x03; // 2-bit green
 		uint8_t b_2bit = (b >> 6) & 0x03; // 2-bit blue
@@ -102,10 +102,10 @@ namespace color {
 		uint8_t g = (color >> 8) & 0xFF;
 		uint8_t b = color & 0xFF;
 
-		uint8_t a_bit = (a >= 128) ? 1 : 0; // 1-bit alpha
-		uint8_t r_bit = (r >= 128) ? 1 : 0; // 1-bit red
-		uint8_t g_bit = (g >= 128) ? 1 : 0; // 1-bit green
-		uint8_t b_bit = (b >= 128) ? 1 : 0; // 1-bit blue
+		uint8_t a_bit = (a > 0) ? 1 : 0; // 1-bit alpha
+		uint8_t r_bit = (r > 0) ? 1 : 0; // 1-bit red
+		uint8_t g_bit = (g > 0) ? 1 : 0; // 1-bit green
+		uint8_t b_bit = (b > 0) ? 1 : 0; // 1-bit blue
 
 		return (a_bit << 3) | (r_bit << 2) | (g_bit << 1) | b_bit;
 	}
@@ -117,7 +117,7 @@ namespace color {
 		uint8_t g_bit = (color >> 1) & 0x01;
 		uint8_t b_bit = color & 0x01;
 
-		uint8_t a = a_bit ? 0xFF : 0x00; // Full transparency or fully opaque
+		uint8_t a = a_bit ? 0x00 : 0xFF; // Full transparency or fully opaque
 		uint8_t r = r_bit ? 0xFF : 0x00; // 0xFF if 1, else 0x00
 		uint8_t g = g_bit ? 0xFF : 0x00;
 		uint8_t b = b_bit ? 0xFF : 0x00;

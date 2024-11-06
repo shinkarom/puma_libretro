@@ -127,6 +127,17 @@ namespace ppu {
 					pxa += 1;
 					break;
 				}
+				case 2: {
+					auto c = bus::read8(pxa);
+					uint8_t pixel_data = (c >> (4 * (1 - bitOffset))) & 0x0F;
+					color = color::palette4bit[pixel_data];
+					bitOffset++;
+					if(bitOffset == 2){
+						bitOffset = 0;
+						pxa += 1;
+					}
+					break;
+				}
 				default: {
 					color = color::palette16bit[bus::read16(pxa)];
 					pxa += 2;
