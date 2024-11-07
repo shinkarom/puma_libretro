@@ -24,7 +24,6 @@ enum {
 	API_waitForVBlank,
 	API_cls,
 	API_drawSprite,
-	API_setDMCStart,
 };
 
 void printRegisters() {
@@ -73,8 +72,6 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_getDimensions:{
-			//bus::push16(screenWidth);
-			//bus::push16(screenHeight);
 			auto mode = (screenWidth-16) + ((screenHeight-16)/16);
 			bus::push16(mode);
 			break;
@@ -94,8 +91,6 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_setDimensions: {
-			//auto y = bus::pop16();
-			//auto x = bus::pop16();
 			auto mode = bus::pop16();
 			auto w = ((mode&0xF0)+16);
 			auto h = ((mode&0x0F)+1)*16;
@@ -156,12 +151,6 @@ void syscall_handler(int value) {
 			auto x = bus::pop16();
 			auto address = bus::pop32();
 			ppu::drawSprite(address, x, y, w, h, options);
-			break;
-		}
-		case API_setDMCStart: {
-			auto end = bus::pop32();
-			auto start = bus::pop32();
-			apu::setDMCStart(start, end);
 			break;
 		}
 		default:
