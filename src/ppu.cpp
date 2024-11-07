@@ -122,12 +122,17 @@ namespace ppu {
 		for(int _i = 0; _i < w * h; _i++) {
 			switch((options&0xFF00)>>8) {
 				case 1: {
+					color = color::palette16bit[bus::read16(pxa)];
+					pxa += 2;
+					break;
+				}
+				case 2: {
 					auto c = bus::read8(pxa);
 					color = color::palette8bit[c];
 					pxa += 1;
 					break;
 				}
-				case 2: {
+				case 3: {
 					auto c = bus::read8(pxa);
 					uint8_t pixel_data = (c >> (4 * (1 - bitOffset))) & 0x0F;
 					color = color::palette4bit[pixel_data];
@@ -139,8 +144,8 @@ namespace ppu {
 					break;
 				}
 				default: {
-					color = color::palette16bit[bus::read16(pxa)];
-					pxa += 2;
+					color = bus::read32(pxa);
+					pxa += 4;
 					break;
 				}
 			}

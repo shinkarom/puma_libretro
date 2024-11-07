@@ -22,107 +22,154 @@ namespace color {
 		 }
 	}
 	
-	uint32_t convert16to32color(uint16_t color) {
-		uint8_t r, g, b, a;
+	/// Convert 32-bit ARGB8888 to 16-bit ARGB4444
+	uint16_t convert32to16color(uint32_t color8888) {
+		uint8_t alpha = (color8888 >> 28) & 0xF; // Keep top 4 bits of Alpha
+		uint8_t red = (color8888 >> 20) & 0xF;   // Keep top 4 bits of Red
+		uint8_t green = (color8888 >> 12) & 0xF; // Keep top 4 bits of Green
+		uint8_t blue = (color8888 >> 4) & 0xF;   // Keep top 4 bits of Blue
+		return (alpha << 12) | (red << 8) | (green << 4) | blue;
+	}
 
-		// Extract alpha, red, green, and blue components from the 16-bit color
-		a = (color & 0x8000) ? 0x00 : 0xFF; // Check the 16th bit for alpha
-		r = (color >> 10) & 0x1F;
-		g = (color >> 5) & 0x1F;
-		b = color & 0x1F;
+	/// Convert 32-bit ARGB8888 to 8-bit ARGB2222
+	uint8_t convert32to8color(uint32_t color8888) {
+		uint8_t alpha = (color8888 >> 30) & 0x3; // Keep top 2 bits of Alpha
+		uint8_t red = (color8888 >> 22) & 0x3;   // Keep top 2 bits of Red
+		uint8_t green = (color8888 >> 14) & 0x3; // Keep top 2 bits of Green
+		uint8_t blue = (color8888 >> 6) & 0x3;   // Keep top 2 bits of Blue
+		return (alpha << 6) | (red << 4) | (green << 2) | blue;
+	}
 
-		// Expand each component to 8 bits
-		r = (r << 3) | (r >> 2);
-		g = (g << 3) | (g >> 2);
-		b = (b << 3) | (b >> 2);
+	/// Convert 16-bit ARGB4444 to 32-bit ARGB8888
+	uint32_t convert16to32color(uint16_t color4444) {
+		uint8_t alpha = (color4444 >> 12) & 0xF;
+		uint8_t red = (color4444 >> 8) & 0xF;
+		uint8_t green = (color4444 >> 4) & 0xF;
+		uint8_t blue = color4444 & 0xF;
 
-		// Combine the expanded components into a 32-bit ARGB color
-		return (a << 24) | (r << 16) | (g << 8) | b;
+		// Expand 4-bit values to 8-bit by scaling
+		alpha = (alpha << 4) | alpha;
+		red = (red << 4) | red;
+		green = (green << 4) | green;
+		blue = (blue << 4) | blue;
+
+		return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	}
+
+	/// Convert 8-bit ARGB2222 to 32-bit ARGB8888
+	uint32_t convert8to32color(uint8_t color2222) {
+		uint8_t alpha = (color2222 >> 6) & 0x3;
+		uint8_t red = (color2222 >> 4) & 0x3;
+		uint8_t green = (color2222 >> 2) & 0x3;
+		uint8_t blue = color2222 & 0x3;
+
+		// Expand 2-bit values to 8-bit by scaling
+		alpha = (alpha << 6) | (alpha << 4) | (alpha << 2) | alpha;
+		red = (red << 6) | (red << 4) | (red << 2) | red;
+		green = (green << 6) | (green << 4) | (green << 2) | green;
+		blue = (blue << 6) | (blue << 4) | (blue << 2) | blue;
+
+		return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	}
+
+	/// Convert 16-bit ARGB4444 to 8-bit ARGB2222
+	uint8_t convert16to8color(uint16_t color4444) {
+		uint8_t alpha = (color4444 >> 12) & 0x3; // Keep top 2 bits of Alpha
+		uint8_t red = (color4444 >> 8) & 0x3;    // Keep top 2 bits of Red
+		uint8_t green = (color4444 >> 4) & 0x3;  // Keep top 2 bits of Green
+		uint8_t blue = color4444 & 0x3;          // Keep top 2 bits of Blue
+		return (alpha << 6) | (red << 4) | (green << 2) | blue;
+	}
+
+	/// Convert 8-bit ARGB2222 to 16-bit ARGB4444
+	uint16_t convert8to16color(uint8_t color2222) {
+		uint8_t alpha = (color2222 >> 6) & 0x3;
+		uint8_t red = (color2222 >> 4) & 0x3;
+		uint8_t green = (color2222 >> 2) & 0x3;
+		uint8_t blue = color2222 & 0x3;
+
+		// Expand 2-bit values to 4-bit by scaling
+		alpha = (alpha << 2) | alpha;
+		red = (red << 2) | red;
+		green = (green << 2) | green;
+		blue = (blue << 2) | blue;
+
+		return (alpha << 12) | (red << 8) | (green << 4) | blue;
 	}
 	
-	uint16_t convert32to16color(uint32_t color) {
-		uint8_t r, g, b, a;
-
-		// Extract alpha, red, green, and blue components from the 32-bit ARGB color
-		a = (color >> 24) & 0xFF;
-		r = (color >> 16) & 0xFF;
-		g = (color >> 8) & 0xFF;
-		b = color & 0xFF;
-
-		// Compress each component to 5 bits
-		r = (r >> 3) & 0x1F;
-		g = (g >> 3) & 0x1F;
-		b = (b >> 3) & 0x1F;
-
-		// Set the 16th bit based on the alpha channel
-		uint16_t result = (r << 10) | (g << 5) | b;
-		if (a > 0) {
-			result |= 0x8000; // Set the 16th bit
-		}
-
-		return result;
-	}	
-
-	// Convert ARGB8888 to 8-bit color (1-bit transparency, 1 unused bit, RGB222)
-	uint8_t convert32to8color(uint32_t color) {
-		uint8_t a = (color >> 24) & 0xFF;
-		uint8_t r = (color >> 16) & 0xFF;
-		uint8_t g = (color >> 8) & 0xFF;
-		uint8_t b = color & 0xFF;
-
-		uint8_t a_bit = (a > 0) ? 1 : 0; // 1-bit transparency (opaque if alpha >= 128)
-		uint8_t r_2bit = (r >> 6) & 0x03; // 2-bit red
-		uint8_t g_2bit = (g >> 6) & 0x03; // 2-bit green
-		uint8_t b_2bit = (b >> 6) & 0x03; // 2-bit blue
-
-		return (a_bit << 7) | (r_2bit << 4) | (g_2bit << 2) | b_2bit;
+	/// Convert 32-bit ARGB8888 to 4-bit ARGB1111
+	uint8_t convert32to4color(uint32_t color8888) {
+		uint8_t alpha = (color8888 >> 31) & 0x1; // Keep top 1 bit of Alpha
+		uint8_t red = (color8888 >> 23) & 0x1;   // Keep top 1 bit of Red
+		uint8_t green = (color8888 >> 15) & 0x1; // Keep top 1 bit of Green
+		uint8_t blue = (color8888 >> 7) & 0x1;   // Keep top 1 bit of Blue
+		return (alpha << 3) | (red << 2) | (green << 1) | blue;
+	}
+	
+	/// Convert 16-bit ARGB4444 to 4-bit ARGB1111
+	uint8_t convert16to4color(uint16_t color4444) {
+		uint8_t alpha = (color4444 >> 12) & 0x1; // Keep top 1 bit of Alpha
+		uint8_t red = (color4444 >> 8) & 0x1;    // Keep top 1 bit of Red
+		uint8_t green = (color4444 >> 4) & 0x1;  // Keep top 1 bit of Green
+		uint8_t blue = color4444 & 0x1;          // Keep top 1 bit of Blue
+		return (alpha << 3) | (red << 2) | (green << 1) | blue;
+	}
+	
+	/// Convert 8-bit ARGB2222 to 4-bit ARGB1111
+	uint8_t convert8to4color(uint8_t color2222) {
+		uint8_t alpha = (color2222 >> 6) & 0x1; // Keep top 1 bit of Alpha
+		uint8_t red = (color2222 >> 4) & 0x1;   // Keep top 1 bit of Red
+		uint8_t green = (color2222 >> 2) & 0x1; // Keep top 1 bit of Green
+		uint8_t blue = color2222 & 0x1;         // Keep top 1 bit of Blue
+		return (alpha << 3) | (red << 2) | (green << 1) | blue;
 	}
 
-	// Convert 8-bit color (1-bit transparency, 1 unused bit, RGB222) to ARGB8888
-	uint32_t convert8to32color(uint8_t color) {
-		uint8_t a_bit = (color >> 7) & 0x01;
-		uint8_t r_2bit = (color >> 4) & 0x03;
-		uint8_t g_2bit = (color >> 2) & 0x03;
-		uint8_t b_2bit = color & 0x03;
+	/// Convert 4-bit ARGB1111 to 32-bit ARGB8888
+	uint32_t convert4to32color(uint8_t color1111) {
+		uint8_t alpha = (color1111 >> 3) & 0x1;
+		uint8_t red = (color1111 >> 2) & 0x1;
+		uint8_t green = (color1111 >> 1) & 0x1;
+		uint8_t blue = color1111 & 0x1;
 
-		uint8_t a = a_bit ? 0x00 : 0xFF; // Full transparency or fully opaque
-		uint8_t r = (r_2bit << 6) | (r_2bit << 4) | (r_2bit << 2) | r_2bit;
-		uint8_t g = (g_2bit << 6) | (g_2bit << 4) | (g_2bit << 2) | g_2bit;
-		uint8_t b = (b_2bit << 6) | (b_2bit << 4) | (b_2bit << 2) | b_2bit;
-		
-		uint32_t result = (a << 24) | (r << 16) | (g << 8) | b;
-		//std::cout<<std::hex<<(int)(color)<<" "<<(int)(a_bit)<<" "<<(int)(r_2bit)<<" "<<(int)(g_2bit)<<" "<<(int)(b_2bit)<<" "<<result<<std::dec<<std::endl;
-		return result;
+		// Expand 1-bit values to 8-bit by full on/off scaling
+		alpha = alpha ? 0xFF : 0x00;
+		red = red ? 0xFF : 0x00;
+		green = green ? 0xFF : 0x00;
+		blue = blue ? 0xFF : 0x00;
+
+		return (alpha << 24) | (red << 16) | (green << 8) | blue;
 	}
 
-	// Convert ARGB8888 to 4-bit color (ARGB1111)
-	uint8_t convert32to4color(uint32_t color) {
-		uint8_t a = (color >> 24) & 0xFF;
-		uint8_t r = (color >> 16) & 0xFF;
-		uint8_t g = (color >> 8) & 0xFF;
-		uint8_t b = color & 0xFF;
+	/// Convert 4-bit ARGB1111 to 16-bit ARGB4444
+	uint16_t convert4to16color(uint8_t color1111) {
+		uint8_t alpha = (color1111 >> 3) & 0x1;
+		uint8_t red = (color1111 >> 2) & 0x1;
+		uint8_t green = (color1111 >> 1) & 0x1;
+		uint8_t blue = color1111 & 0x1;
 
-		uint8_t a_bit = (a > 0) ? 1 : 0; // 1-bit alpha
-		uint8_t r_bit = (r > 0) ? 1 : 0; // 1-bit red
-		uint8_t g_bit = (g > 0) ? 1 : 0; // 1-bit green
-		uint8_t b_bit = (b > 0) ? 1 : 0; // 1-bit blue
+		// Expand 1-bit values to 4-bit by full on/off scaling
+		alpha = alpha ? 0xF : 0x0;
+		red = red ? 0xF : 0x0;
+		green = green ? 0xF : 0x0;
+		blue = blue ? 0xF : 0x0;
 
-		return (a_bit << 3) | (r_bit << 2) | (g_bit << 1) | b_bit;
+		return (alpha << 12) | (red << 8) | (green << 4) | blue;
 	}
 
-	// Convert 4-bit color (ARGB1111) to ARGB8888
-	uint32_t convert4to32color(uint8_t color) {
-		uint8_t a_bit = (color >> 3) & 0x01;
-		uint8_t r_bit = (color >> 2) & 0x01;
-		uint8_t g_bit = (color >> 1) & 0x01;
-		uint8_t b_bit = color & 0x01;
+	/// Convert 4-bit ARGB1111 to 8-bit ARGB2222
+	uint8_t convert4to8color(uint8_t color1111) {
+		uint8_t alpha = (color1111 >> 3) & 0x1;
+		uint8_t red = (color1111 >> 2) & 0x1;
+		uint8_t green = (color1111 >> 1) & 0x1;
+		uint8_t blue = color1111 & 0x1;
 
-		uint8_t a = a_bit ? 0x00 : 0xFF; // Full transparency or fully opaque
-		uint8_t r = r_bit ? 0xFF : 0x00; // 0xFF if 1, else 0x00
-		uint8_t g = g_bit ? 0xFF : 0x00;
-		uint8_t b = b_bit ? 0xFF : 0x00;
+		// Expand 1-bit values to 2-bit by full on/off scaling
+		alpha = alpha ? 0x3 : 0x0;
+		red = red ? 0x3 : 0x0;
+		green = green ? 0x3 : 0x0;
+		blue = blue ? 0x3 : 0x0;
 
-		return (a << 24) | (r << 16) | (g << 8) | b;
+		return (alpha << 6) | (red << 4) | (green << 2) | blue;
 	}
 	
 }
