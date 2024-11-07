@@ -23,4 +23,6 @@ namespace color {
 	uint16_t convert4to16color(uint8_t color1111);
 	uint8_t convert4to8color(uint8_t color1111);
 	
+	uint32_t blendARGB(uint32_t src, uint32_t dst);
+	
 }

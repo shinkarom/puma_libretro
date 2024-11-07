@@ -80,7 +80,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_setPixel: {
-			auto color = bus::pop16();
+			auto color = bus::pop32();
 			auto y = bus::pop16();
 			auto x = bus::pop16();
 			ppu::setPixel(x, y, color);
@@ -90,7 +90,7 @@ void syscall_handler(int value) {
 			auto y = bus::pop16();
 			auto x = bus::pop16();
 			auto color = ppu::getPixel(x, y);
-			bus::push16(color);
+			bus::push32(color);
 			break;
 		}
 		case API_setDimensions: {

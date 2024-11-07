@@ -14,20 +14,20 @@ namespace bus {
 	uint32_t syscallStack[syscallStackSize];
 	
 	void write8(uint32_t address, uint8_t value) {
-		if(address>=ramSize)
+		if(address>=totalMemory)
 			return;
 		memory[address] = value;
 	}
 	
 	void write16(uint32_t address, uint16_t value) {
-		if(address+1 >= ramSize)
+		if(address+1 >= totalMemory)
 			return;
 		memory[address] = (value>>8)&0xFF;
 		memory[address+1] = (value)&0xFF;
 	}
 	
 	void write32(uint32_t address, uint32_t value) {
-		 if(address+3 >= ramSize)
+		 if(address+3 >= totalMemory)
 			return;
 		memory[address] =  (value>>24)&0xFF;
 		memory[address+1] =  (value>>16)&0xFF;

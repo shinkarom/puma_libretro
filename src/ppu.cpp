@@ -20,7 +20,8 @@ namespace ppu {
 		if(x < 0 || x > screenWidth || y<0 || y > screenHeight || (color&0xFF000000!=0xFF000000)) {
 			return;
 		}
-		frame_buf[y*screenWidth+x] = color;
+		auto dstColor = frame_buf[y*screenWidth+x];
+		frame_buf[y*screenWidth+x] = color::blendARGB(color, dstColor);
 		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<std::hex<<color<<std::dec<<std::endl;
 	}
 	
@@ -61,7 +62,7 @@ namespace ppu {
 	}
 	
 	void setPixel(int x, int y, uint16_t color) {
-		setFullPixel(x, y, color::palette16bit[color]);
+		setFullPixel(x, y, color);
 		//std::cout<<"Set pixel at "<<x<<" "<<y<<" with "<<color<<std::endl;
 	}
 	
@@ -69,7 +70,7 @@ namespace ppu {
 		if(x > screenWidth || y > screenHeight) {
 			return 0;
 		}
-		return color::convert32to16color(frame_buf[y*screenWidth+x]);
+		return frame_buf[y*screenWidth+x];
 	}
 	
 	void queueDimensionsChange(int w, int h) {
@@ -133,14 +134,29 @@ namespace ppu {
 					break;
 				}
 				case 3: {
-					auto c = bus::read8(pxa);
-					uint8_t pixel_data = (c >> (4 * (1 - bitOffset))) & 0x0F;
+					uint8_t byte_data = bus::read8(pxa);
+					uint8_t pixel_data = (byte_data >> (4 * (1 - bitOffset))) & 0x0F;
 					color = color::palette4bit[pixel_data];
-					bitOffset++;
-					if(bitOffset == 2){
-						bitOffset = 0;
-						pxa += 1;
-					}
+					bitOffset = 1 - bitOffset; // Toggle between 0 and 1
+					if (bitOffset == 0) pxa += 1; // Move to next byte after 2 pixels
+					break;
+				}
+				case 4: {
+					uint32_t palette2bit[4] = {0x00000000, 0x00000000, 0xFF888888, 0xFFFFFFFF};
+					uint8_t byte_data = bus::read8(pxa);
+					uint8_t pixel_data = (byte_data >> (2 * (3 - bitOffset))) & 0x03;
+					color = palette2bit[pixel_data];
+					bitOffset = (bitOffset + 1) % 4; // Move to the next 2-bit position
+					if (bitOffset == 0) pxa += 1; // Move to next byte after 4 pixels
+					break;
+				}
+				case 5: {
+					uint32_t palette1bit[2] = {0x00000000, 0xFFFFFFFF};
+					uint8_t byte_data = bus::read8(pxa);
+					uint8_t pixel_data = (byte_data >> (7 - bitOffset)) & 0x01;
+					color = palette1bit[pixel_data];
+					bitOffset = (bitOffset + 1) % 8; // Move to the next 1-bit position
+					if (bitOffset == 0) pxa += 1; // Move to next byte after 8 pixels
 					break;
 				}
 				default: {
