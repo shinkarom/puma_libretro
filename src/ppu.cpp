@@ -225,4 +225,125 @@ namespace ppu {
 		//std::cout<<"Drew line from "<<x1<<" "<<y1<<" to "<<x2<<" "<<y2<<" with "<<std::hex<<color<<std::dec<<std::endl;
 	}
 	
+	void drawCircleOutline(uint16_t x0, uint16_t y0, uint16_t radius, uint32_t color) {
+		int x = radius;
+		int y = 0;
+		int err = 0;
+
+		while (x >= y) {
+			setFullPixel(x0 + x, y0 + y, color);
+			setFullPixel(x0 + y, y0 + x, color);
+			setFullPixel(x0 - y, y0 + x, color);
+			setFullPixel(x0 - x, y0 + y, color);
+			setFullPixel(x0 - x, y0 - y, color);
+			setFullPixel(x0 - y, y0 - x, color);
+			setFullPixel(x0 + y, y0 - x, color);
+			setFullPixel(x0 + x, y0 - y, color);
+
+			y += 1;
+			if (err <= 0) {
+				err += 2*y + 1;
+			} else {
+				x -= 1;
+				err -= 2*x + 1;
+			}
+		}
+	}
+
+	void drawCircleFilled(uint16_t x0, uint16_t y0, uint16_t radius, uint32_t color) {
+		for (int y = -radius; y <= radius; y++) {
+			for (int x = -radius; x <= radius; x++) {
+				if (x*x + y*y <= radius*radius) {
+					setFullPixel(x0 + x, y0 + y, color);
+				}
+			}
+		}
+	}
+
+	void drawEllipseOutline(uint16_t x0, uint16_t y0, uint16_t a, uint16_t b, uint32_t color) {
+		int x = a;
+		int y = 0;
+		int dx = (1 - 2 * a) * b * b;
+		int dy = a * a;
+		int err = dx + dy;
+
+		while (x >= 0) {
+			setFullPixel(x0 + x, y0 + y, color);
+			setFullPixel(x0 - x, y0 + y, color);
+			setFullPixel(x0 - x, y0 - y, color);
+			setFullPixel(x0 + x, y0 - y, color);
+
+			int e2 = 2 * err;
+			if (e2 >= dx) {
+				x--;
+				err += dx += 2 * b * b;
+			}
+			if (e2 <= dy) {
+				y++;
+				err += dy += 2 * a * a;
+			}
+		}
+	}
+
+	void drawEllipseFilled(uint16_t x0, uint16_t y0, uint16_t a, uint16_t b, uint32_t color) {
+		for (int y = -b; y <= b; y++) {
+			for (int x = -a; x <= a; x++) {
+				if ((x*x) * (b*b) + (y*y) * (a*a) <= (a*a) * (b*b)) {
+					setFullPixel(x0 + x, y0 + y, color);
+				}
+			}
+		}
+	}
+
+	void drawRectangleOutline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color) {
+		for (uint16_t x = x1; x <= x2; x++) {
+			setFullPixel(x, y1, color);
+			setFullPixel(x, y2, color);
+		}
+		for (uint16_t y = y1; y <= y2; y++) {
+			setFullPixel(x1, y, color);
+			setFullPixel(x2, y, color);
+		}
+	}
+
+	void drawRectangleFilled(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color) {
+		for (uint16_t y = y1; y <= y2; y++) {
+			for (uint16_t x = x1; x <= x2; x++) {
+				setFullPixel(x, y, color);
+			}
+		}
+	}
+
+	void drawTriangleOutline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, uint32_t color) {
+		drawLine(x1, y1, x2, y2, color);
+		drawLine(x2, y2, x3, y3, color);
+		drawLine(x3, y3, x1, y1, color);
+	}
+
+	void drawTriangleFilled(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, uint32_t color) {
+		auto swap = [](uint16_t &a, uint16_t &b) { uint16_t temp = a; a = b; b = temp; };
+		
+		// Sort the vertices by y-coordinate
+		if (y1 > y2) { swap(x1, x2); swap(y1, y2); }
+		if (y1 > y3) { swap(x1, x3); swap(y1, y3); }
+		if (y2 > y3) { swap(x2, x3); swap(y2, y3); }
+
+		auto interpolate = [](int y, int x1, int y1, int x2, int y2) -> int {
+			if (y1 == y2) return x1;
+			return x1 + (y - y1) * (x2 - x1) / (y2 - y1);
+		};
+
+		for (uint16_t y = y1; y <= y3; y++) {
+			uint16_t xStart = (y < y2) ? interpolate(y, x1, y1, x2, y2) : interpolate(y, x2, y2, x3, y3);
+			uint16_t xEnd = interpolate(y, x1, y1, x3, y3);
+
+			if (xStart > xEnd) swap(xStart, xEnd);
+
+			for (uint16_t x = xStart; x <= xEnd; x++) {
+				setFullPixel(x, y, color);
+			}
+		}
+	}
+
+	
 }

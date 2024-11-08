@@ -27,6 +27,14 @@ enum {
 	API_set1bitPalette,
 	API_set2bitPalette,
 	API_drawLine,
+	API_drawCircle,
+	API_drawCircleOutline,
+	API_drawEllipse,
+	API_drawEllipseOutline,
+	API_drawRectangle, 
+	API_drawRectangleOutline,
+	API_drawTriangle,
+	API_drawTriangleOutline,
 };
 
 void printRegisters() {
