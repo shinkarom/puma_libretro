@@ -18,7 +18,6 @@ enum {
 	API_isPressed,
 	API_isJustPressed,
 	API_isJustReleased,
-	API_waitForVBlank,
 	API_set1bitPalette,
 	API_set2bitPalette,
 	API_cls,
@@ -138,10 +137,6 @@ void syscall_handler(int value) {
 			} else {
 				bus::push16(0);
 			}
-			break;
-		}
-		case API_waitForVBlank: {
-			m68k_end_timeslice();
 			break;
 		}
 		case API_cls: {
