@@ -29,6 +29,8 @@ constexpr auto syscallAddress = 0xFFFFFFFC;
 
 constexpr int fakeDMCStartAddress = 0xC000;
 
+constexpr auto transparentColor = 0xFF000000;
+
 extern uint64_t frameNum;
 extern int screenWidth;
 extern int screenHeight;

@@ -7,8 +7,6 @@ namespace color {
 	uint32_t palette16bit[65536];
 	uint32_t palette8bit[256];
 	uint32_t palette4bit[64];
-	
-	constexpr auto transparentColor = 0xFF000000;
 	 
 	void init() {
 		for(int i = 0; i < 65536; i++) {

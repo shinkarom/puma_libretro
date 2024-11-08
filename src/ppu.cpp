@@ -99,7 +99,6 @@ namespace ppu {
 		auto y_delta = 1;
 		auto y_end = y+h;
 		//std::cout<<x_start<<" "<<x_delta<<" "<<x_end<<" "<<y_start<<" "<<y_delta<<" "<<y_end<<" "<<std::endl;
-		
 		if(options & HFLIP_MASK) {
 			//std::cout<<"HFLIP ";
 			
@@ -387,5 +386,33 @@ namespace ppu {
 		}
 	}
 
+	void drawText(uint32_t fontOrigin, int16_t fontWidth, int16_t fontHeight, uint32_t textOrigin, uint16_t x, uint16_t y, uint32_t color) {
+		uint32_t oldPalette[2];
+		oldPalette[0] = palette1bit[0];
+		oldPalette[1] = palette1bit[1];
+		palette1bit[0] = transparentColor;
+		palette1bit[1] = color;
+		auto letterOffset = textOrigin;
+		auto xOffset = x;
+		do {
+			char letter = bus::read8(letterOffset);
+			if(letter == 0) {
+				break;
+			}
+			auto letterAddress = fontOrigin + (letter-32)*8;
+			if(letter<32 || letter>127) {
+				
+			} else {
+				drawSprite(letterAddress, xOffset, y, fontWidth, fontHeight, 0x0500);
+			}
+			letterOffset++;
+			xOffset+=fontWidth;
+			if(xOffset>=screenWidth) {
+				break;
+			}
+		} while(true);
+		palette1bit[0] = oldPalette[0];
+		palette1bit[1] = oldPalette[1];
+	}
 	
 }

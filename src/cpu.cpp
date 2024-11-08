@@ -33,6 +33,7 @@ enum {
 	API_drawRectangleOutline,
 	API_drawTriangle,
 	API_drawTriangleOutline,
+	API_drawText,
 };
 
 void printRegisters() {
@@ -248,6 +249,18 @@ void syscall_handler(int value) {
 			auto y1 = bus::pop16();
 			auto x1 = bus::pop16();
 			ppu::drawTriangleOutline(x1, y1, x2, y2, x3, y3, color);
+			break;
+		}
+		case API_drawText: {
+			// font_origin, text_origin, x, y, color
+			auto color = bus::pop32();
+			auto y = bus::pop16();
+			auto x = bus::pop16();
+			auto textOrigin = bus::pop32();
+			auto fontHeight = bus::pop16();
+			auto fontWidth = bus::pop16();
+			auto fontOrigin = bus::pop32();
+			ppu::drawText(fontOrigin, fontWidth, fontHeight, textOrigin, x, y, color);
 			break;
 		}
 		default:
