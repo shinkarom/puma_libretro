@@ -231,36 +231,57 @@ namespace ppu {
 		int err = 0;
 
 		while (x >= y) {
-			setFullPixel(x0 + x, y0 + y, color);
-			setFullPixel(x0 + y, y0 + x, color);
-			setFullPixel(x0 - y, y0 + x, color);
-			setFullPixel(x0 - x, y0 + y, color);
 			setFullPixel(x0 - x, y0 - y, color);
+			setFullPixel(x0 + x, y0 - y, color);
+			setFullPixel(x0 - x, y0 + y, color);
+			setFullPixel(x0 + x, y0 + y, color);
 			setFullPixel(x0 - y, y0 - x, color);
 			setFullPixel(x0 + y, y0 - x, color);
-			setFullPixel(x0 + x, y0 - y, color);
+			setFullPixel(x0 - y, y0 + x, color);
+			setFullPixel(x0 + y, y0 + x, color);
 
 			y += 1;
 			if (err <= 0) {
 				err += 2*y + 1;
 			} else {
 				x -= 1;
-				err -= 2*x + 1;
+				//err -= 2*x + 1;
+				err += 2*(y-x) + 1;
 			}
 		}
 	}
 
 	void drawCircleFilled(uint16_t x0, uint16_t y0, uint16_t radius, uint32_t color) {
-		for (int y = -radius; y <= radius; y++) {
-			for (int x = -radius; x <= radius; x++) {
-				if (x*x + y*y <= radius*radius) {
-					setFullPixel(x0 + x, y0 + y, color);
-				}
+		int x = radius;
+		int y = 0;
+		int err = 0;
+
+		while (x >= y) {
+			for (int i = x0 - x; i <= x0 + x; i++) {
+				setFullPixel(i, y0 - y, color);
+				setFullPixel(i, y0 + y, color);
+			}
+			for (int i = x0 - y; i <= x0 + y; i++) {
+				setFullPixel(i, y0 - x, color);
+				setFullPixel(i, y0 + x, color);
+			}
+
+			y++;
+			if (err <= 0) {
+				err += 2 * y + 1;
+			} else {
+				x--;
+				err += 2 * (y - x) + 1;
 			}
 		}
 	}
 
 	void drawEllipseOutline(uint16_t x0, uint16_t y0, uint16_t a, uint16_t b, uint32_t color) {
+		if(a == b){
+			drawCircleOutline(x0, y0, a, color);
+			return;
+		}
+		
 		int x = a;
 		int y = 0;
 		int dx = (1 - 2 * a) * b * b;
@@ -268,10 +289,10 @@ namespace ppu {
 		int err = dx + dy;
 
 		while (x >= 0) {
-			setFullPixel(x0 + x, y0 + y, color);
-			setFullPixel(x0 - x, y0 + y, color);
-			setFullPixel(x0 - x, y0 - y, color);
 			setFullPixel(x0 + x, y0 - y, color);
+			setFullPixel(x0 + x, y0 + y, color);
+			setFullPixel(x0 - x, y0 - y, color);
+			setFullPixel(x0 - x, y0 + y, color);
 
 			int e2 = 2 * err;
 			if (e2 >= dx) {
@@ -286,14 +307,35 @@ namespace ppu {
 	}
 
 	void drawEllipseFilled(uint16_t x0, uint16_t y0, uint16_t a, uint16_t b, uint32_t color) {
-		for (int y = -b; y <= b; y++) {
-			for (int x = -a; x <= a; x++) {
-				if ((x*x) * (b*b) + (y*y) * (a*a) <= (a*a) * (b*b)) {
-					setFullPixel(x0 + x, y0 + y, color);
-				}
+		if(a == b){
+			drawCircleFilled(x0, y0, a, color);
+			return;
+		}
+		
+		int x = a;
+		int y = 0;
+		int dx = (1 - 2 * a) * b * b;
+		int dy = a * a;
+		int err = dx + dy;
+
+		while (x >= 0) {
+			for(int i = x0-x; i<=x0+x; i++) {
+				setFullPixel(i, y0 - y, color);
+				setFullPixel(i, y0 + y, color);
+			}
+
+			int e2 = 2 * err;
+			if (e2 >= dx) {
+				x--;
+				err += dx += 2 * b * b;
+			}
+			if (e2 <= dy) {
+				y++;
+				err += dy += 2 * a * a;
 			}
 		}
 	}
+
 
 	void drawRectangleOutline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color) {
 		for (uint16_t x = x1; x <= x2; x++) {

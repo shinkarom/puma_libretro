@@ -186,6 +186,80 @@ void syscall_handler(int value) {
 			auto x1 = bus::pop16();
 			ppu::drawLine(x1, y1, x2, y2, color);
 		}
+		case API_drawCircle: {
+			auto color = bus::pop32();
+			auto radius = bus::pop16();
+			auto y0 = bus::pop16();
+			auto x0 = bus::pop16();
+			ppu::drawCircleFilled(x0, y0, radius, color);
+			break;
+		}
+		case API_drawCircleOutline: {
+			auto color = bus::pop32();
+			auto radius = bus::pop16();
+			auto y0 = bus::pop16();
+			auto x0 = bus::pop16();
+			ppu::drawCircleOutline(x0, y0, radius, color);
+			break;
+		}
+		case API_drawEllipse: {
+			auto color = bus::pop32();
+			auto b = bus::pop16();
+			auto a = bus::pop16();
+			auto y0 = bus::pop16();
+			auto x0 = bus::pop16();
+			ppu::drawEllipseFilled(x0, y0, a, b, color);
+			break;
+		}
+		case API_drawEllipseOutline: {
+			auto color = bus::pop32();
+			auto b = bus::pop16();
+			auto a = bus::pop16();
+			auto y0 = bus::pop16();
+			auto x0 = bus::pop16();
+			ppu::drawEllipseOutline(x0, y0, a, b, color);
+			break;
+		}
+		case API_drawRectangle: {
+			auto color = bus::pop32();
+			auto y2 = bus::pop16();
+			auto x2 = bus::pop16();
+			auto y1 = bus::pop16();
+			auto x1 = bus::pop16();
+			ppu::drawRectangleFilled(x1, y1, x2, y2, color);
+			break;
+		}
+		case API_drawRectangleOutline: {
+			auto color = bus::pop32();
+			auto y2 = bus::pop16();
+			auto x2 = bus::pop16();
+			auto y1 = bus::pop16();
+			auto x1 = bus::pop16();
+			ppu::drawRectangleOutline(x1, y1, x2, y2, color);
+			break;
+		}
+		case API_drawTriangle: {
+			auto color = bus::pop32();
+			auto y3 = bus::pop16();
+			auto x3 = bus::pop16();
+			auto y2 = bus::pop16();
+			auto x2 = bus::pop16();
+			auto y1 = bus::pop16();
+			auto x1 = bus::pop16();
+			ppu::drawTriangleFilled(x1, y1, x2, y2, x3, y3, color);
+			break;
+		}
+		case API_drawTriangleOutline: {
+			auto color = bus::pop32();
+			auto y3 = bus::pop16();
+			auto x3 = bus::pop16();
+			auto y2 = bus::pop16();
+			auto x2 = bus::pop16();
+			auto y1 = bus::pop16();
+			auto x1 = bus::pop16();
+			ppu::drawTriangleOutline(x1, y1, x2, y2, x3, y3, color);
+			break;
+		}
 		default:
 			break;
 	}
