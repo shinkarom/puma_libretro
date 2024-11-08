@@ -17,6 +17,7 @@ namespace ppu {
 	void drawSprite(uint32_t address, int x, int y, int w, int h, uint16_t options);
 	void set1bitPalette(uint32_t color1, uint32_t color2);
 	void set2bitPalette(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4);
+	void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color);
 	
 	uint32_t* getBuffer();
 }

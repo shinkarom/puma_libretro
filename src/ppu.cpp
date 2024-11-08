@@ -2,6 +2,7 @@
 #include "common.hpp"
 
 #include <cstring>
+#include <cmath>
 #include <iostream>
 #include "bus.hpp"
 #include "color.hpp"
@@ -195,4 +196,33 @@ namespace ppu {
 		palette2bit[2] = color3;
 		palette2bit[3] = color4;
 	}
+	
+	void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint32_t color) {
+		int dx = std::abs(x2 - x1);
+		int dy = std::abs(y2 - y1);
+		int sx = (x1 < x2) ? 1 : -1;
+		int sy = (y1 < y2) ? 1 : -1;
+		int err = dx - dy;
+
+		while (true) {
+			setFullPixel(x1, y1, color);  // Draw the pixel
+
+			// If the start point reaches the end point, stop drawing
+			if (x1 == x2 && y1 == y2) break;
+
+			int e2 = 2 * err;
+			
+			if (e2 > -dy) {
+				err -= dy;
+				x1 += sx;
+			}
+			
+			if (e2 < dx) {
+				err += dx;
+				y1 += sy;
+			}
+		}
+		//std::cout<<"Drew line from "<<x1<<" "<<y1<<" to "<<x2<<" "<<y2<<" with "<<std::hex<<color<<std::dec<<std::endl;
+	}
+	
 }

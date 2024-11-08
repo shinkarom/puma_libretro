@@ -26,6 +26,7 @@ enum {
 	API_drawSprite,
 	API_set1bitPalette,
 	API_set2bitPalette,
+	API_drawLine,
 };
 
 void printRegisters() {
@@ -168,6 +169,14 @@ void syscall_handler(int value) {
 			auto color1 = bus::pop32();
 			ppu::set2bitPalette(color1, color2, color3, color4);
 			break;
+		}
+		case API_drawLine: {
+			auto color = bus::pop32();
+			auto y2 = bus::pop16();
+			auto x2 = bus::pop16();
+			auto y1 = bus::pop16();
+			auto x1 = bus::pop16();
+			ppu::drawLine(x1, y1, x2, y2, color);
 		}
 		default:
 			break;
