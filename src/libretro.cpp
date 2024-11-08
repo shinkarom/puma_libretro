@@ -29,7 +29,6 @@ char retro_base_directory[4096];
 char retro_game_path[4096];
 static retro_environment_t environ_cb;
 
-uint64_t frameNum = 0;
 int screenWidth, screenHeight, screenTotalPixels;
 void (*wh_callback)(int w, int h);
 void (*audioRegistersCallback)(int reg, int value);
@@ -227,8 +226,6 @@ void retro_run(void)
 	//audio_callback();
 	video_cb(ppu::getBuffer(), screenWidth, screenHeight, screenWidth*sizeof(uint32_t)); 
 
-	frameNum++;
-
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
@@ -267,7 +264,6 @@ bool retro_load_game(const struct retro_game_info *info)
 	cpu::onLoad();
 	ppu::afterLoad();
 
-	frameNum = 0;
    (void)info;
    return true;
 }

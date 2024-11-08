@@ -13,19 +13,18 @@
 enum {
 	API_printRegisters = 0,
 	API_getDimensions,
-	API_setPixel,
-	API_getPixel,
 	API_setDimensions,
-	API_getFrameNumber,
 	API_writeAudioRegister,
 	API_isPressed,
 	API_isJustPressed,
 	API_isJustReleased,
 	API_waitForVBlank,
-	API_cls,
-	API_drawSprite,
 	API_set1bitPalette,
 	API_set2bitPalette,
+	API_cls,
+	API_setPixel,
+	API_getPixel,
+	API_drawSprite,
 	API_drawLine,
 	API_drawCircle,
 	API_drawCircleOutline,
@@ -106,10 +105,6 @@ void syscall_handler(int value) {
 			auto w = ((mode&0xF0)+16);
 			auto h = ((mode&0x0F)+1)*16;
 			ppu::queueDimensionsChange(w, h);
-			break;
-		}
-		case API_getFrameNumber: {
-			bus::push32(frameNum);
 			break;
 		}
 		case API_writeAudioRegister: {
@@ -331,7 +326,7 @@ namespace cpu {
 	
 	void frame() {
 		auto x = m68k_execute(cyclesPerFrame);
-		//m68k_set_irq(2);
+		m68k_set_irq(2);
 		//auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
 		//std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
 	}
