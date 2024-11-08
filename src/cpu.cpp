@@ -24,6 +24,8 @@ enum {
 	API_waitForVBlank,
 	API_cls,
 	API_drawSprite,
+	API_set1bitPalette,
+	API_set2bitPalette,
 };
 
 void printRegisters() {
@@ -153,6 +155,20 @@ void syscall_handler(int value) {
 			ppu::drawSprite(address, x, y, w, h, options);
 			break;
 		}
+		case API_set1bitPalette: {
+			auto color2 = bus::pop32();
+			auto color1 = bus::pop32();
+			ppu::set1bitPalette(color1, color2);
+			break;
+		}
+		case API_set2bitPalette: {
+			auto color4 = bus::pop32();
+			auto color3 = bus::pop32();
+			auto color2 = bus::pop32();
+			auto color1 = bus::pop32();
+			ppu::set2bitPalette(color1, color2, color3, color4);
+			break;
+		}
 		default:
 			break;
 	}
@@ -224,7 +240,7 @@ namespace cpu {
 	
 	void frame() {
 		auto x = m68k_execute(cyclesPerFrame);
-		m68k_set_irq(2);
+		//m68k_set_irq(2);
 		//auto pc = m68k_get_reg(nullptr, M68K_REG_PC);
 		//std::cout<<x<<" "<<pc<<" "<<frameNum<<std::endl;
 	}

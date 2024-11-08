@@ -18,6 +18,7 @@ constexpr auto cpuClockRate = 40*1024*1024;
 constexpr auto cyclesPerFrame = cpuClockRate / framesPerSecond;
 constexpr auto totalMemory = 32*1024*1024;
 constexpr auto systemMemorySize = 1 * 1024 * 1024;
+constexpr auto systemMemoryStart = totalMemory - systemMemorySize;
 constexpr auto maxFileSize = totalMemory - 0x200 - systemMemorySize;
 constexpr auto codeOffset = 0x200;
 constexpr auto stackOffset = totalMemory;

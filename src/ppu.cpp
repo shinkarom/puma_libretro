@@ -14,6 +14,9 @@ namespace ppu {
 	static uint32_t *frame_buf;
 	
 	int pendingW, pendingH;
+	uint32_t palette1bit[2] = {0x00000000, 0xFFFFFFFF};
+	uint32_t palette2bit[4] = {0x00000000, 0x00000000, 0xFF888888, 0xFFFFFFFF};
+	
 	int bitOffset;
 	
 	void setFullPixel(int x, int y, uint32_t color) {
@@ -142,7 +145,6 @@ namespace ppu {
 					break;
 				}
 				case 4: {
-					uint32_t palette2bit[4] = {0x00000000, 0x00000000, 0xFF888888, 0xFFFFFFFF};
 					uint8_t byte_data = bus::read8(pxa);
 					uint8_t pixel_data = (byte_data >> (2 * (3 - bitOffset))) & 0x03;
 					color = palette2bit[pixel_data];
@@ -150,8 +152,7 @@ namespace ppu {
 					if (bitOffset == 0) pxa += 1; // Move to next byte after 4 pixels
 					break;
 				}
-				case 5: {
-					uint32_t palette1bit[2] = {0x00000000, 0xFFFFFFFF};
+				case 5: { 
 					uint8_t byte_data = bus::read8(pxa);
 					uint8_t pixel_data = (byte_data >> (7 - bitOffset)) & 0x01;
 					color = palette1bit[pixel_data];
@@ -181,5 +182,17 @@ namespace ppu {
 	
 	uint32_t* getBuffer() {
 		return frame_buf;
+	}
+	
+	void set1bitPalette(uint32_t color1, uint32_t color2) {
+		palette1bit[0] = color1;
+		palette1bit[1] = color2;
+	}
+	
+	void set2bitPalette(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
+		palette2bit[0] = color1;
+		palette2bit[1] = color2;
+		palette2bit[2] = color3;
+		palette2bit[3] = color4;
 	}
 }
