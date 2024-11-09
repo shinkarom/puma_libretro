@@ -4,11 +4,19 @@
 #include "common.hpp"
 #include <iostream>
 #include <cstdint>
+#include <random>
 
 #include "bus.hpp"
 #include "ppu.hpp"
 #include "apu.hpp"
 #include "input.hpp"
+
+std::mt19937 initialize_generator() {
+    std::random_device rd;
+    return std::mt19937(rd());
+}
+
+std::mt19937 gen = initialize_generator();
 
 enum {
 	API_printRegisters = 0,
@@ -34,6 +42,7 @@ enum {
 	API_drawTriangle,
 	API_drawTriangleOutline,
 	API_drawText,
+	API_getRandomNumber,
 };
 
 void printRegisters() {
@@ -261,6 +270,14 @@ void syscall_handler(int value) {
 			auto fontWidth = bus::pop16();
 			auto fontOrigin = bus::pop32();
 			ppu::drawText(fontOrigin, fontWidth, fontHeight, textOrigin, x, y, color);
+			break;
+		}
+		case API_getRandomNumber: {
+			auto mmax = bus::pop32();
+			auto mmin = bus::pop32();
+			std::uniform_int_distribution<uint32_t> dist(mmin, mmax);
+			auto r = dist(gen);
+			bus::push32(r);
 			break;
 		}
 		default:
