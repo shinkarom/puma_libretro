@@ -10,6 +10,7 @@
 #include "ppu.hpp"
 #include "apu.hpp"
 #include "input.hpp"
+#include "color.hpp"
 
 std::mt19937 initialize_generator() {
     std::random_device rd;
@@ -17,6 +18,10 @@ std::mt19937 initialize_generator() {
 }
 
 std::mt19937 gen = initialize_generator();
+
+uint32_t popColor() {
+	return color::palette16bit[bus::pop16()];
+}
 
 enum {
 	API_printRegisters = 0,
@@ -28,7 +33,6 @@ enum {
 	API_set2bitPalette,
 	API_cls,
 	API_setPixel,
-	API_getPixel,
 	API_drawSprite,
 	API_drawLine,
 	API_drawCircle,
@@ -89,18 +93,11 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_setPixel: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y = bus::pop16();
 			auto x = bus::pop16();
 			ppu::setPixel(x, y, color);
 			break; 
-		}
-		case API_getPixel: {
-			auto y = bus::pop16();
-			auto x = bus::pop16();
-			auto color = ppu::getPixel(x, y);
-			bus::push32(color);
-			break;
 		}
 		case API_writeAudioRegister: {
 			auto value = bus::pop16();
@@ -151,21 +148,21 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_set1bitPalette: {
-			auto color2 = bus::pop32();
-			auto color1 = bus::pop32();
+			auto color2 = popColor();
+			auto color1 = popColor();
 			ppu::set1bitPalette(color1, color2);
 			break;
 		}
 		case API_set2bitPalette: {
-			auto color4 = bus::pop32();
-			auto color3 = bus::pop32();
-			auto color2 = bus::pop32();
-			auto color1 = bus::pop32();
+			auto color4 = popColor();
+			auto color3 = popColor();
+			auto color2 = popColor();
+			auto color1 = popColor();
 			ppu::set2bitPalette(color1, color2, color3, color4);
 			break;
 		}
 		case API_drawLine: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y2 = bus::pop16();
 			auto x2 = bus::pop16();
 			auto y1 = bus::pop16();
@@ -173,7 +170,7 @@ void syscall_handler(int value) {
 			ppu::drawLine(x1, y1, x2, y2, color);
 		}
 		case API_drawCircle: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto radius = bus::pop16();
 			auto y0 = bus::pop16();
 			auto x0 = bus::pop16();
@@ -181,7 +178,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawCircleOutline: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto radius = bus::pop16();
 			auto y0 = bus::pop16();
 			auto x0 = bus::pop16();
@@ -189,7 +186,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawEllipse: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto b = bus::pop16();
 			auto a = bus::pop16();
 			auto y0 = bus::pop16();
@@ -198,7 +195,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawEllipseOutline: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto b = bus::pop16();
 			auto a = bus::pop16();
 			auto y0 = bus::pop16();
@@ -207,7 +204,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawRectangle: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y2 = bus::pop16();
 			auto x2 = bus::pop16();
 			auto y1 = bus::pop16();
@@ -216,7 +213,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawRectangleOutline: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y2 = bus::pop16();
 			auto x2 = bus::pop16();
 			auto y1 = bus::pop16();
@@ -225,7 +222,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawTriangle: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y3 = bus::pop16();
 			auto x3 = bus::pop16();
 			auto y2 = bus::pop16();
@@ -236,7 +233,7 @@ void syscall_handler(int value) {
 			break;
 		}
 		case API_drawTriangleOutline: {
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y3 = bus::pop16();
 			auto x3 = bus::pop16();
 			auto y2 = bus::pop16();
@@ -248,7 +245,7 @@ void syscall_handler(int value) {
 		}
 		case API_drawText: {
 			// font_origin, text_origin, x, y, color
-			auto color = bus::pop32();
+			auto color = popColor();
 			auto y = bus::pop16();
 			auto x = bus::pop16();
 			auto textOrigin = bus::pop32();

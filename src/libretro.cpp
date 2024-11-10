@@ -163,8 +163,6 @@ static void update_input(void)
 		input::justPressedInputs[i] = (! input::previouslyPressedInputs[i]) && input::pressedInputs[i];
 		input::justReleasedInputs[i] = input::previouslyPressedInputs[i] & (! input::pressedInputs[i]);
 	}
-	
-	
 }
 
 
