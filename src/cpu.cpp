@@ -20,8 +20,6 @@ std::mt19937 gen = initialize_generator();
 
 enum {
 	API_printRegisters = 0,
-	API_getDimensions,
-	API_setDimensions,
 	API_writeAudioRegister,
 	API_isPressed,
 	API_isJustPressed,
@@ -90,11 +88,6 @@ void syscall_handler(int value) {
 			printRegisters();
 			break;
 		}
-		case API_getDimensions:{
-			auto mode = (screenWidth-16) + ((screenHeight-16)/16);
-			bus::push16(mode);
-			break;
-		}
 		case API_setPixel: {
 			auto color = bus::pop32();
 			auto y = bus::pop16();
@@ -107,13 +100,6 @@ void syscall_handler(int value) {
 			auto x = bus::pop16();
 			auto color = ppu::getPixel(x, y);
 			bus::push32(color);
-			break;
-		}
-		case API_setDimensions: {
-			auto mode = bus::pop16();
-			auto w = ((mode&0xF0)+16);
-			auto h = ((mode&0x0F)+1)*16;
-			ppu::queueDimensionsChange(w, h);
 			break;
 		}
 		case API_writeAudioRegister: {

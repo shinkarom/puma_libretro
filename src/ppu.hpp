@@ -12,7 +12,6 @@ namespace ppu {
 	
 	void setPixel(int x, int y, uint16_t color);
 	uint16_t getPixel(int x, int y);
-	void queueDimensionsChange(int w, int h);
 	void clear(uint32_t color);
 	void drawSprite(uint32_t address, int x, int y, int w, int h, uint16_t options);
 	void set1bitPalette(uint32_t color1, uint32_t color2);

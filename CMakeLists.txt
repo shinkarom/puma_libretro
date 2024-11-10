@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 set(LIBNAME puma_libretro)
 project(${LIBNAME} LANGUAGES C CXX VERSION 1.0.1 DESCRIPTION "Libretro core")
 set(CMAKE_SHARED_LIBRARY_PREFIX )
+#set(CMAKE_CXX_STANDARD 23)
 
 add_library(musashi STATIC 
 	src/musashi/softfloat/softfloat.c

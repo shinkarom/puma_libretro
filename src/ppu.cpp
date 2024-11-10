@@ -14,7 +14,6 @@ namespace ppu {
 	
 	static uint32_t *frame_buf;
 	
-	int pendingW, pendingH;
 	uint32_t palette1bit[2] = {0x00000000, 0xFFFFFFFF};
 	uint32_t palette2bit[4] = {0x00000000, 0x00000000, 0xFF888888, 0xFFFFFFFF};
 	
@@ -30,14 +29,8 @@ namespace ppu {
 	}
 	
 	void init() {
-		screenWidth = maxScreenWidth;
-		screenHeight = maxScreenHeight;
-		screenTotalPixels = maxScreenTotalPixels;
-		pendingW = screenWidth;
-		pendingH = screenHeight;
-		
-		 frame_buf = new uint32_t[maxScreenTotalPixels];
-		 memset(frame_buf,0,maxScreenTotalPixels*sizeof(uint32_t));
+		 frame_buf = new uint32_t[screenTotalPixels];
+		 memset(frame_buf,0,screenTotalPixels*sizeof(uint32_t));
 		 
 	}
 	
@@ -54,9 +47,7 @@ namespace ppu {
 	}
 	
 	void afterFrame() {
-		if(pendingW!=screenWidth || pendingH!=screenHeight) {
-			wh_callback(pendingW, pendingH);
-		}
+
 	}
 	
 	void clear(uint32_t color) {
@@ -75,18 +66,6 @@ namespace ppu {
 			return 0;
 		}
 		return frame_buf[y*screenWidth+x];
-	}
-	
-	void queueDimensionsChange(int w, int h) {
-		if(w > maxScreenWidth) {
-			w = maxScreenWidth;
-		}
-		if(h > maxScreenHeight) {
-			h = maxScreenHeight;
-		}
-		pendingW = w;
-		pendingH = h;
-		//std::cout<<"Queued dimensions change to "<<w<<" "<<h<<std::endl;
 	}
 	
 	void drawSprite(uint32_t address, int x, int y, int w, int h, uint16_t options) {

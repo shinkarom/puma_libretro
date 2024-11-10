@@ -29,25 +29,6 @@ char retro_base_directory[4096];
 char retro_game_path[4096];
 static retro_environment_t environ_cb;
 
-int screenWidth, screenHeight, screenTotalPixels;
-void (*wh_callback)(int w, int h);
-void (*audioRegistersCallback)(int reg, int value);
-
-void change_wh(int w, int h) {
-	if(w<0 || w>maxScreenWidth || h < 0 || h > maxScreenHeight) {
-		return;
-	}
-	retro_game_geometry geo;
-	geo.base_width = w;
-	geo.base_height = h;
-	geo.aspect_ratio = 0.0f;
-	if(environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &geo)) {
-		screenWidth = w;
-		screenHeight = h;
-		screenTotalPixels = screenWidth * screenHeight;
-	}
-}
-
 static void fallback_log(enum retro_log_level level, const char *fmt, ...)
 {
    (void)level;
@@ -64,8 +45,6 @@ void retro_init(void)
    {
       snprintf(retro_base_directory, sizeof(retro_base_directory), "%s", dir);
    }
-   
-   wh_callback = &change_wh;
    
    input::init();
    apu::init();
