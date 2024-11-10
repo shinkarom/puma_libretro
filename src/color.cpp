@@ -21,7 +21,7 @@ namespace color {
 	}
 	
 	/// Convert 32-bit ARGB8888 to 16-bit ARGB4444
-	uint16_t convert32to16color(uint32_t color8888) {
+	constexpr uint16_t convert32to16color(uint32_t color8888) {
 		uint8_t alpha = (color8888 >> 28) & 0xF; // Keep top 4 bits of Alpha
 		uint8_t red = (color8888 >> 20) & 0xF;   // Keep top 4 bits of Red
 		uint8_t green = (color8888 >> 12) & 0xF; // Keep top 4 bits of Green
@@ -30,7 +30,7 @@ namespace color {
 	}
 
 	/// Convert 32-bit ARGB8888 to 8-bit ARGB2222
-	uint8_t convert32to8color(uint32_t color8888) {
+	constexpr uint8_t convert32to8color(uint32_t color8888) {
 		uint8_t alpha = (color8888 >> 30) & 0x3; // Keep top 2 bits of Alpha
 		uint8_t red = (color8888 >> 22) & 0x3;   // Keep top 2 bits of Red
 		uint8_t green = (color8888 >> 14) & 0x3; // Keep top 2 bits of Green
@@ -39,7 +39,7 @@ namespace color {
 	}
 
 	/// Convert 16-bit ARGB4444 to 32-bit ARGB8888
-	uint32_t convert16to32color(uint16_t color4444) {
+	constexpr uint32_t convert16to32color(uint16_t color4444) {
 		uint8_t alpha = (color4444 >> 12) & 0xF;
 		uint8_t red = (color4444 >> 8) & 0xF;
 		uint8_t green = (color4444 >> 4) & 0xF;
@@ -55,7 +55,7 @@ namespace color {
 	}
 
 	/// Convert 8-bit ARGB2222 to 32-bit ARGB8888
-	uint32_t convert8to32color(uint8_t color2222) {
+	constexpr uint32_t convert8to32color(uint8_t color2222) {
 		uint8_t alpha = (color2222 >> 6) & 0x3;
 		uint8_t red = (color2222 >> 4) & 0x3;
 		uint8_t green = (color2222 >> 2) & 0x3;
@@ -71,7 +71,7 @@ namespace color {
 	}
 
 	/// Convert 16-bit ARGB4444 to 8-bit ARGB2222
-	uint8_t convert16to8color(uint16_t color4444) {
+	constexpr uint8_t convert16to8color(uint16_t color4444) {
 		uint8_t alpha = (color4444 >> 12) & 0x3; // Keep top 2 bits of Alpha
 		uint8_t red = (color4444 >> 8) & 0x3;    // Keep top 2 bits of Red
 		uint8_t green = (color4444 >> 4) & 0x3;  // Keep top 2 bits of Green
@@ -80,7 +80,7 @@ namespace color {
 	}
 
 	/// Convert 8-bit ARGB2222 to 16-bit ARGB4444
-	uint16_t convert8to16color(uint8_t color2222) {
+	constexpr uint16_t convert8to16color(uint8_t color2222) {
 		uint8_t alpha = (color2222 >> 6) & 0x3;
 		uint8_t red = (color2222 >> 4) & 0x3;
 		uint8_t green = (color2222 >> 2) & 0x3;
@@ -96,7 +96,7 @@ namespace color {
 	}
 	
 	/// Convert 32-bit ARGB8888 to 4-bit ARGB1111
-	uint8_t convert32to4color(uint32_t color8888) {
+	constexpr uint8_t convert32to4color(uint32_t color8888) {
 		uint8_t alpha = (color8888 >> 31) & 0x1; // Keep top 1 bit of Alpha
 		uint8_t red = (color8888 >> 23) & 0x1;   // Keep top 1 bit of Red
 		uint8_t green = (color8888 >> 15) & 0x1; // Keep top 1 bit of Green
@@ -105,7 +105,7 @@ namespace color {
 	}
 	
 	/// Convert 16-bit ARGB4444 to 4-bit ARGB1111
-	uint8_t convert16to4color(uint16_t color4444) {
+	constexpr uint8_t convert16to4color(uint16_t color4444) {
 		uint8_t alpha = (color4444 >> 12) & 0x1; // Keep top 1 bit of Alpha
 		uint8_t red = (color4444 >> 8) & 0x1;    // Keep top 1 bit of Red
 		uint8_t green = (color4444 >> 4) & 0x1;  // Keep top 1 bit of Green
@@ -114,7 +114,7 @@ namespace color {
 	}
 	
 	/// Convert 8-bit ARGB2222 to 4-bit ARGB1111
-	uint8_t convert8to4color(uint8_t color2222) {
+	constexpr uint8_t convert8to4color(uint8_t color2222) {
 		uint8_t alpha = (color2222 >> 6) & 0x1; // Keep top 1 bit of Alpha
 		uint8_t red = (color2222 >> 4) & 0x1;   // Keep top 1 bit of Red
 		uint8_t green = (color2222 >> 2) & 0x1; // Keep top 1 bit of Green
@@ -123,7 +123,7 @@ namespace color {
 	}
 
 	/// Convert 4-bit ARGB1111 to 32-bit ARGB8888
-	uint32_t convert4to32color(uint8_t color1111) {
+	constexpr uint32_t convert4to32color(uint8_t color1111) {
 		uint8_t alpha = (color1111 >> 3) & 0x1;
 		uint8_t red = (color1111 >> 2) & 0x1;
 		uint8_t green = (color1111 >> 1) & 0x1;
@@ -139,7 +139,7 @@ namespace color {
 	}
 
 	/// Convert 4-bit ARGB1111 to 16-bit ARGB4444
-	uint16_t convert4to16color(uint8_t color1111) {
+	constexpr uint16_t convert4to16color(uint8_t color1111) {
 		uint8_t alpha = (color1111 >> 3) & 0x1;
 		uint8_t red = (color1111 >> 2) & 0x1;
 		uint8_t green = (color1111 >> 1) & 0x1;
@@ -155,7 +155,7 @@ namespace color {
 	}
 
 	/// Convert 4-bit ARGB1111 to 8-bit ARGB2222
-	uint8_t convert4to8color(uint8_t color1111) {
+	constexpr uint8_t convert4to8color(uint8_t color1111) {
 		uint8_t alpha = (color1111 >> 3) & 0x1;
 		uint8_t red = (color1111 >> 2) & 0x1;
 		uint8_t green = (color1111 >> 1) & 0x1;
