@@ -158,8 +158,7 @@ static void update_input(void)
 	
 	for (int i = 0; i< numInputs; i++) {
 		input::previouslyPressedInputs[i] = input::pressedInputs[i];
-		auto device = (i < numButtons) ? RETRO_DEVICE_JOYPAD : RETRO_DEVICE_KEYBOARD;
-		state = input_state_cb(0, device, 0, input::inputMapping[i]);
+		state = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, input::inputMapping[i]);
 		input::pressedInputs[i] = (state != 0);
 		input::justPressedInputs[i] = (! input::previouslyPressedInputs[i]) && input::pressedInputs[i];
 		input::justReleasedInputs[i] = input::previouslyPressedInputs[i] & (! input::pressedInputs[i]);

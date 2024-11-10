@@ -2,8 +2,7 @@
 
 #include <cstdint>
 
-constexpr int numButtons = 12;
-constexpr int numInputs = 130;
+constexpr int numInputs = 12;
 
 constexpr auto screenWidth = 160;
 constexpr auto screenHeight = 160;
